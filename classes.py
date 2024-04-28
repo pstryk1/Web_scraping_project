@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup as bs
 from lxml import html
 import requests
 import sys
-import classes as cs
 
 class Fullscreen_Window:
 
