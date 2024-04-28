@@ -13,6 +13,6 @@ if __name__ == '__main__':
     mainScreen.edit_text(5, 100)
     mainScreen.edit_text(5, 150)
     
-    mainScreen.tk.mainloop()
+    mainScreen.ttk.mainloop()
 
 
