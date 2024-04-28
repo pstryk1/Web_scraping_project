@@ -5,11 +5,16 @@ from lxml import html
 import requests
 import sys
 
+themes = ('darkly', 'flatly')
+
+
+
 class Fullscreen_Window:
 
     def __init__(self):
-        self.ttk = ttk.Window(themename="darkly")
+        self.ttk = ttk.Window(themename=themes[0])
         self.ttk.attributes("-topmost", True)
+        
         #self.tk.geometry("{0}x{1}+0+0".format(self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()))
         self.ttk.state('zoomed')
         self.frame = ttk.Frame(self.ttk)
@@ -32,8 +37,28 @@ class Fullscreen_Window:
         self.ttk.configure(bg=color, fg = fontcolor)
 
     def edit_text(self,  height, width):
-        edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="groove")
+        edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="groove", padx=10, pady=10)
         edit_text.pack() #expand=False, fill="both"
         return edit_text.get("1.0", "end-1c")
+    
+       
+
+    def toggle_button(self, text):
+
+        def bfun(self, var):
+            self.style = themes[int(var)]
+
+        var1 = 0 #tk.IntVar()
+        toggle = ttk.Checkbutton(
+            bootstyle = "dange, round-toggle",
+            text = text,
+            variable=var1, 
+            onvalue = 0, 
+            offvalue=1,
+            command=bfun(self, var1))
+        toggle.pack(pady = 10)
+
+
+
 
 
