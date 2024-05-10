@@ -7,6 +7,17 @@ import sys
 
 themes = ('darkly', 'flatly')
 
+#def Maxbus_data(date, hour):
+
+
+def Maxbus_scrapped():
+    page1 = 'https://maxbus.com.pl/rozklad/krakow-zegocina-laskowa-limanowa/'
+    query = requests.get(page1)
+    scrape = bs(query.text, 'html.parser')
+    #body = scrap.body
+    tab = scrape.find('tbody')
+    #col = tab.find_all('col')
+    return tab
 
 
 class Fullscreen_Window:
@@ -60,5 +71,8 @@ class Fullscreen_Window:
 
 
 
+#class Maxbus_Limanowa:
 
+    #def __init__(self, day_sign, route, dep_time, arr_time):
 
+print(Maxbus_scrapped())
