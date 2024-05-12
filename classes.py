@@ -67,6 +67,8 @@ def Szwagropol(location):
 
     return data_2
 
+
+
 class Fullscreen_Window:
 
     def __init__(self):
@@ -116,10 +118,9 @@ class Fullscreen_Window:
 
     def dropdown_list(self, bname):
         #przycisk menu 
-        def cahnge(menu):
-            menu.configure(text = menu)
+        def cahnge(text):
+            menu.configure(text = text)
 
-            pass
         menu = ttk.Menubutton(bootstyle=themes[0], text='menu')
         menu.pack()
         
@@ -129,6 +130,8 @@ class Fullscreen_Window:
         for x in ['godzina1', 'godzina2', 'godzina3', 'godzina4']:
             in_menu.add_radiobutton(label=x, variable=item_var, command=lambda x=x: cahnge(x))
         menu['menu'] = in_menu 
+    def data(self):
+        pass
     
 
 
