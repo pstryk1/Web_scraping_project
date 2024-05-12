@@ -13,6 +13,8 @@ if __name__ == '__main__':
     #mainScreen.edit_text(5, 100)
     #mainScreen.edit_text(5, 100)
     mainScreen.toggle_button("przycisk")
+
+    mainScreen.dropdown_list("przycisk")
     
     mainScreen.ttk.mainloop()
 

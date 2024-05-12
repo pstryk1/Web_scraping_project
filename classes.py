@@ -97,9 +97,7 @@ class Fullscreen_Window:
     def edit_text(self,  height, width):
         edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="groove", padx=10, pady=10)
         edit_text.pack() #expand=False, fill="both"
-        return edit_text.get("1.0", "end-1c")
-    
-       
+        return edit_text.get("1.0", "end-1c")  
 
     def toggle_button(self, text):
 
@@ -115,6 +113,23 @@ class Fullscreen_Window:
             offvalue=1,
             command=bfun(self, var1))
         toggle.pack(pady = 10)
+
+    def dropdown_list(self, bname):
+        #przycisk menu 
+        def cahnge(menu):
+            menu.configure(text = menu)
+
+            pass
+        menu = ttk.Menubutton(bootstyle=themes[0], text='menu')
+        menu.pack()
+        
+        # itemy w menu
+        in_menu = ttk.Menu(menu)
+        item_var = ''
+        for x in ['godzina1', 'godzina2', 'godzina3', 'godzina4']:
+            in_menu.add_radiobutton(label=x, variable=item_var, command=lambda x=x: cahnge(x))
+        menu['menu'] = in_menu 
+    
 
 
 
