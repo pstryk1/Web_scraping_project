@@ -7,8 +7,20 @@ import sys
 
 themes = ('darkly', 'flatly')
 
-#def Maxbus_data(date, hour):
+def Labels(label, bus):
+    if bus == "Szwagropol":
+        all_labels = {
+            '(1-5)': 'Pn-Pt',
+            '(1-6)': 'Pn-Sb',
+            '(5-7)': 'Pt-Nd',
+            '(6-7)': 'Sb-Nd',
+            '(1-5,7)': 'Pn-Pt +Nd',
+            '(5)': 'Pt',
+            '(6)': 'Sb',
+            '(7)': 'Nd'
+        }
 
+    return all_labels[label]
 
 def Maxbus_scrapped():
     page1 = 'https://maxbus.com.pl/rozklad/krakow-zegocina-laskowa-limanowa/'
@@ -19,6 +31,41 @@ def Maxbus_scrapped():
     #col = tab.find_all('col')
     return tab
 
+def Szwagropol(location):
+    if location == 'NS':
+        page = 'https://www.szwagropol.pl/pl/linie-autobusowe/rozklad-jazdy/?rozklad=2&kierunek=6'
+    elif location == 'ZAK':
+        page = 'https://www.szwagropol.pl/pl/linie-autobusowe/rozklad-jazdy/?rozklad=1&kierunek=2'
+    query = requests.get(page)
+    scrape = bs(query.text, 'html.parser')
+    data_1 = [i.text.split() for i in scrape.find_all('table')]
+
+    unwanted = ['Odjazd','Przyjazd','Szczegóły', 'trasy']
+    data_2 = []
+
+    for i in data_1:
+        data_3 = []
+        data_4 = []
+        label = 'Pn-Nd'
+
+        for j in i:
+            if j not in unwanted:
+                if len(data_4) != 2:
+                    data_4.append(j[:5])
+                    if len(j) > 5:
+                        label = Labels(j[5:], 'Szwagropol')
+                else:
+                    data_4.append(label)
+                    data_3.append(data_4)
+                    label = 'Pn-Nd'
+                    data_4 = []
+                    data_4.append(j[:5])
+
+        data_4.append(label)
+        data_3.append(data_4)
+        data_2.append(data_3)
+
+    return data_2
 
 class Fullscreen_Window:
 
@@ -75,4 +122,4 @@ class Fullscreen_Window:
 
     #def __init__(self, day_sign, route, dep_time, arr_time):
 
-print(Maxbus_scrapped())
+print(Szwagropol('ZAK'))
