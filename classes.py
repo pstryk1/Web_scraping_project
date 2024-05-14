@@ -5,6 +5,7 @@ from datetime import datetime
 from lxml import html
 import requests
 import sys
+import time
 
 themes = ('darkly', 'flatly')
 
@@ -23,51 +24,28 @@ def Labels(label, bus):
 
     return all_labels[label]
 
-def Maxbus_scrapped():
-    page1 = 'https://maxbus.com.pl/rozklad/krakow-zegocina-laskowa-limanowa/'
-    query = requests.get(page1)
-    scrape = bs(query.text, 'html.parser')
-    #body = scrap.body
-    tab = scrape.find('tbody')
-    #col = tab.find_all('col')
+def Maxbus():
+    page = 'https://maxbus.com.pl/rozklad/krakow-zegocina-laskowa-limanowa/'
+    query = requests.get(page)
+    scrape = bs(query.text, 'lxml')
+
+    tab = scrape.find_all('tr')
+
     return tab
 
-def Szwagropol(start, destination):
-    if start  == 'NS' or destination == 'NS':
-        page = 'https://www.szwagropol.pl/pl/linie-autobusowe/rozklad-jazdy/?rozklad=2&kierunek=6'
+def Pociag(start, destination, date, hour):
+    if start  == 'Nowy Sącz' or destination == 'Nowy Sącz':
+        page = f'https://kolejemalopolskie.com.pl/pl/wyszukiwarka-polaczen#wyniki-wyszukiwania/1715709958533/Krak%C3%B3w/Nowy%20S%C4%85cz/c%7C55156/c%7C60585/14.05.2024/--%20%3A%20--/0'
     elif start  == 'ZAK' or destination == 'ZAK':
         page = 'https://www.szwagropol.pl/pl/linie-autobusowe/rozklad-jazdy/?rozklad=1&kierunek=2'
 
     query = requests.get(page)
-    scrape = bs(query.text, 'html.parser')
-    data_1 = [i.text.split() for i in scrape.find_all('table')]
+    time.sleep(10)
+    scrape = bs(query.text, 'lxml')
+    data_1 = scrape.find_all('div')
 
-    unwanted = ['Odjazd','Przyjazd','Szczegóły', 'trasy']
-    data_2 = []
 
-    for i in data_1:
-        data_3 = []
-        data_4 = []
-        label = 'Pn-Nd'
-
-        for j in i:
-            if j not in unwanted:
-                if len(data_4) != 2:
-                    data_4.append(j[:5])
-                    if len(j) > 5:
-                        label = Labels(j[5:], 'Szwagropol')
-                else:
-                    data_4.append(label)
-                    data_3.append(tuple(data_4))
-                    label = 'Pn-Nd'
-                    data_4 = []
-                    data_4.append(j[:5])
-
-        data_4.append(label)
-        data_3.append(tuple(data_4))
-        data_2.append(tuple(data_3))
-
-    return tuple(data_2)
+    return data_1
 
 class Fullscreen_Window:
 
@@ -211,4 +189,5 @@ class bus:
 
 
 
-#print(Szwagropol('ZAK'))
+print(Pociag('Kraków', 'Nowy Sącz', '16-05-2024', '05:00'))
+#print(Maxbus())
