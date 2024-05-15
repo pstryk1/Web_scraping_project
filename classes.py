@@ -77,30 +77,47 @@ class Fullscreen_Window:
 
     def __init__(self):
         super().__init__()
+        
+
+
         self.ttk = ttk.Window(themename=themes[current_theme])
+        self.ttk.title("QuoCalCus - znajdź swoj cel")
         self.ttk.attributes("-topmost", True)
         #self.tk.geometry("{0}x{1}+0+0".format(self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()))
         self.ttk.state('zoomed')
-        self.frame = ttk.Frame(self.ttk)
-        self.frame.grid()
-        self.state = False
-        self.ttk.bind("<F11>", self.toggle_fullscreen)
-        self.ttk.bind("<Escape>", self.end_fullscreen)
-        self.dropdown_list("Godzina odjazdu", 1, 1, 20, 20)
 
-        self.cal = ttk.DateEntry(bootstyle=themes[current_theme])
-        self.cal.grid(padx=20, pady=20, row=1, column=5)
+        self.frame = tk.Frame(self.ttk, height=100, width=500,  bd=2, relief="groove", padx=10, pady=10)
+        self.frame.pack(padx=20, pady=20)
+        Search_settings(self)
+
+        #frame1 = ttk.Button(self.frame)  # Ustawienie koloru tła na czerwony
+        #frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
+        
+        #self.frame.config(background='#ff0000')
+        #self.frame.columnconfigure(0, weight=1) 
+        #self.frame.rowconfigure(0, weight=1)
+        #
+
+
+
+
+        #self.ttk.pack_propagate()
+        
+
+
+
+        #self.columnconfigure(0, weight=1)  # Ustawienie obu kolumn na wagę 1
+        #self.columnconfigure(1, weight=1)
+        #self.rowconfigure(0, weight=1)
+        #frame1 = ttk.Button(self.frame)  # Ustawienie koloru tła na czerwony
+        #frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
 
         
-        self.sv = tk.StringVar()
-        self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: self.label_update(sv))
-        self.cal.entry.configure(textvariable=self.sv)
 
-        self.napis = ttk.Label(text='')
-        self.napis.grid(row=1, column=6, padx=20, pady=20)
-
-        self.label1 = ttk.Label(text='')
-        self.label1.grid(row=1, column=7, padx=20, pady=20)
+        #self.napis = ttk.Label(text='')
+        #self.napis.grid(row=1, column=6, )
+        #self.label1 = ttk.Label(text='')
+        #self.label1.grid(row=1, column=7, padx=20, pady=20)
         
 
         
@@ -111,6 +128,10 @@ class Fullscreen_Window:
         #mainScreen.edit_text(5, 100)
         #mainScreen.toggle_button("przycisk")
         #self.choose_date(1, 2, 20, 20)
+
+        self.state = False
+        self.ttk.bind("<F11>", self.toggle_fullscreen)
+        self.ttk.bind("<Escape>", self.end_fullscreen)
 
 
 
@@ -139,11 +160,6 @@ class Fullscreen_Window:
         edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="groove", padx=10, pady=10)
         edit_text.grid(r, c) #expand=False, fill="both"
         return edit_text.get("1.0", "end-1c")  
-    
-   
-
-
-        
 
     def toggle_button(self, text, r, c, px, py):
 
@@ -160,23 +176,9 @@ class Fullscreen_Window:
             command=bfun(self, var1))
         toggle.grid(padx = px, pady = py, row = r, column=c)
 
-    def dropdown_list(self, bname, r, c, px, py):
-        #przycisk menu 
-        def cahnge(text):
-            menu.configure(text = text)
-            self.label1.config(text=text)
-            var.hour = text
-            print(var.hour)
-
-        menu = ttk.Menubutton(bootstyle=themes[current_theme], text=bname)
-        menu.grid(padx = px, pady = py, row=r, column=c)
         
-        # itemy w menu
-        in_menu = ttk.Menu(menu)
-        item_var = ''
-        for x in ['godzina1', 'godzina2', 'godzina3', 'godzina4']:
-            in_menu.add_radiobutton(label=x, variable=item_var, command=lambda x=x: cahnge(x))
-        menu['menu'] = in_menu 
+
+
     """
     def choose_date(self, r, c, px, py):
           # Tworzymy StringVar dla daty
@@ -211,6 +213,77 @@ class Fullscreen_Window:
         button.grid(padx=px, pady=py, row=r, column=c)
         """
         
+
+class Search_settings(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__()
+
+
+        #self.columnconfigure(0, weight=1)  # Ustawienie obu kolumn na wagę 1
+        #self.columnconfigure(1, weight=1)
+        #self.rowconfigure(0, weight=1)
+        #self.frame1 = ttk.Button(parent.frame)  # Ustawienie koloru tła na czerwony
+        #self.frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
+
+        """
+        #self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        self.config()
+        self.columnconfigure(0, weight=1)  # Ustawienie obu kolumn na wagę 1
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.grid()
+        """
+
+        # Przycisk menu
+        hours = [f"{hour:02d}:00" for hour in range(24)]
+
+
+        def change2(text):
+            self.menu2.configure(text=text)
+            #parent.label1.config(text=text)
+
+        self.menu2 = ttk.Menubutton(parent.frame, bootstyle=themes[current_theme], text="Cel")
+        self.menu2.grid(padx=10, pady=10, row=0, column=0, sticky="e", columnspan=1)  # Wyrównanie do środka poziomo
+
+        # Itemy w menu
+        in_menu2 = ttk.Menu(self.menu2)
+        item_var = tk.StringVar()  # Utwórz zmienną dla opcji
+        for x in ('Nowy Targ', "Nowy Sącz", "Słomniki"):
+            in_menu2.add_radiobutton(label=x, variable=item_var, command=lambda x=x: change2(x))
+        self.menu2['menu'] = in_menu2
+
+
+
+        def change1(text):
+            self.menu1.configure(text=text)
+            #parent.label1.config(text=text)
+
+        self.menu1 = ttk.Menubutton(parent.frame, bootstyle=themes[current_theme], text="00:00")
+        self.menu1.grid(padx=10, pady=10, row=0, column=1, sticky="e", columnspan=1)  # Wyrównanie do środka poziomo
+
+        # Itemy w menu
+        in_menu1 = ttk.Menu(self.menu1)
+        item_var = tk.StringVar()  # Utwórz zmienną dla opcji
+        for x in hours:
+            in_menu1.add_radiobutton(label=x, variable=item_var, command=lambda x=x: change1(x))
+        self.menu1['menu'] = in_menu1
+
+        self.cal = ttk.DateEntry(parent.frame, bootstyle=themes[current_theme])
+        self.cal.grid(padx=10, pady=10, row=0, column=2, sticky="e")  # Wyrównanie do środka poziomo
+
+        self.sv = tk.StringVar()
+        self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: self.label_update(sv))
+        self.cal.entry.configure(textvariable=self.sv)
+        
+
+
+
+
+
+
+
+
+
 #class Maxbus_Limanowa:
 
     #def __init__(self, day_sign, route, dep_time, arr_time):
