@@ -86,41 +86,28 @@ class Fullscreen_Window:
         #self.tk.geometry("{0}x{1}+0+0".format(self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()))
         self.ttk.state('zoomed')
 
-        self.frame = tk.Frame(self.ttk, height=100, width=500,  bd=2, relief="groove", padx=10, pady=10)
+        self.frame = tk.Frame(self.ttk, height=100, width=700,  bd=2, relief="groove", padx=10, pady=10)
         self.frame.pack(padx=20, pady=20)
+
+        self.label1 = ttk.Label(text='')
+        self.label1.pack(padx=20, pady=20)
+
         Search_settings(self)
+        
 
         #frame1 = ttk.Button(self.frame)  # Ustawienie koloru tła na czerwony
         #frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
-        
         #self.frame.config(background='#ff0000')
         #self.frame.columnconfigure(0, weight=1) 
         #self.frame.rowconfigure(0, weight=1)
-        #
-
-
-
-
         #self.ttk.pack_propagate()
-        
-
-
-
         #self.columnconfigure(0, weight=1)  # Ustawienie obu kolumn na wagę 1
         #self.columnconfigure(1, weight=1)
         #self.rowconfigure(0, weight=1)
         #frame1 = ttk.Button(self.frame)  # Ustawienie koloru tła na czerwony
         #frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
-
-        
-
         #self.napis = ttk.Label(text='')
         #self.napis.grid(row=1, column=6, )
-        #self.label1 = ttk.Label(text='')
-        #self.label1.grid(row=1, column=7, padx=20, pady=20)
-        
-
-        
         
         #self.find_button(1, 4, 20, 20, label1)
         #self.date_button(1, 5, 20, 20, label1)
@@ -217,49 +204,42 @@ class Fullscreen_Window:
 class Search_settings(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
+        
 
+        def find_data(date):
+            var.properties[2] = date.get()
+            
+        def update():
+            print(f"2: {var.properties}")
+            parent.label1.config(text=var.properties[2])
 
-        #self.columnconfigure(0, weight=1)  # Ustawienie obu kolumn na wagę 1
-        #self.columnconfigure(1, weight=1)
-        #self.rowconfigure(0, weight=1)
-        #self.frame1 = ttk.Button(parent.frame)  # Ustawienie koloru tła na czerwony
-        #self.frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
-
-        """
-        #self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
-        self.config()
-        self.columnconfigure(0, weight=1)  # Ustawienie obu kolumn na wagę 1
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=1)
-        self.grid()
-        """
 
         # Przycisk menu
         hours = [f"{hour:02d}:00" for hour in range(24)]
-
-
         def change2(text):
             self.menu2.configure(text=text)
-            #parent.label1.config(text=text)
+            var.properties[0] = text
+            
 
         self.menu2 = ttk.Menubutton(parent.frame, bootstyle=themes[current_theme], text="Cel")
         self.menu2.grid(padx=10, pady=10, row=0, column=0, sticky="e", columnspan=1)  # Wyrównanie do środka poziomo
 
         # Itemy w menu
         in_menu2 = ttk.Menu(self.menu2)
-        item_var = tk.StringVar()  # Utwórz zmienną dla opcji
+        item_var2 = tk.StringVar()  # Utwórz zmienną dla opcji
         for x in ('Nowy Targ', "Nowy Sącz", "Słomniki"):
-            in_menu2.add_radiobutton(label=x, variable=item_var, command=lambda x=x: change2(x))
+            in_menu2.add_radiobutton(label=x, variable=item_var2, command=lambda x=x: change2(x))
         self.menu2['menu'] = in_menu2
 
 
 
         def change1(text):
             self.menu1.configure(text=text)
+            var.properties[1] = text
             #parent.label1.config(text=text)
 
         self.menu1 = ttk.Menubutton(parent.frame, bootstyle=themes[current_theme], text="00:00")
-        self.menu1.grid(padx=10, pady=10, row=0, column=1, sticky="e", columnspan=1)  # Wyrównanie do środka poziomo
+        self.menu1.grid(padx=10, pady=10, row=0, column=1, sticky="e", columnspan=1) 
 
         # Itemy w menu
         in_menu1 = ttk.Menu(self.menu1)
@@ -269,11 +249,14 @@ class Search_settings(ttk.Frame):
         self.menu1['menu'] = in_menu1
 
         self.cal = ttk.DateEntry(parent.frame, bootstyle=themes[current_theme])
-        self.cal.grid(padx=10, pady=10, row=0, column=2, sticky="e")  # Wyrównanie do środka poziomo
+        self.cal.grid(padx=10, pady=10, row=0, column=2, sticky="e")  
 
         self.sv = tk.StringVar()
-        self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: self.label_update(sv))
+        self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: find_data(sv))
         self.cal.entry.configure(textvariable=self.sv)
+
+        self.find = ttk.Button(parent.frame, bootstyle=themes[current_theme], text="Szukaj", command=update)
+        self.find.grid(padx=10, pady=10, row=0, column=3, sticky="e")
         
 
 

@@ -7,3 +7,4 @@ import sys
 from datetime import date
 hour = ''
 data = ''
+properties = [0, 0, 0]
