@@ -8,7 +8,7 @@ from datetime import date
 import variables as var
 
 themes = ('darkly', 'flatly')
-current_theme= 0
+
 
 def Labels(label, bus):
     if bus == "Szwagropol":
@@ -72,27 +72,29 @@ def Szwagropol(location):
 
 
 
-class Fullscreen_Window:
-    seldate = 0
+class FullscreenWindow:
 
     def __init__(self):
         super().__init__()
         
 
 
-        self.ttk = ttk.Window(themename=themes[current_theme])
+        self.ttk = ttk.Window(themename=themes[0])
         self.ttk.title("QuoCalCus - znajdź swoj cel")
         self.ttk.attributes("-topmost", True)
         #self.tk.geometry("{0}x{1}+0+0".format(self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()))
         self.ttk.state('zoomed')
-
-        self.frame = tk.Frame(self.ttk, height=100, width=700,  bd=2, relief="groove", padx=10, pady=10)
-        self.frame.pack(padx=20, pady=20)
+        self.current_theme= 0
+        self.toggle_button()
+        self.frame = tk.Frame(self.ttk,   bd=2, relief="solid", padx=10, pady=10)#ta ramka jest przeklęta i za chiny nie chce sie przestawić na prawo
+        #self.frame.pack(padx=20, pady=20)
+        self.frame.grid(padx = 10, pady = 10, row = 1, column=0, sticky='ne')
 
         self.label1 = ttk.Label(text='')
-        self.label1.pack(padx=20, pady=20)
-
-        Search_settings(self)
+        #self.label1.pack(padx=20, pady=20)
+        self.label1.grid(padx = 10, pady = 10, row = 2, column=0,sticky='ne')
+        
+        SearchSettings(self)
         
 
         #frame1 = ttk.Button(self.frame)  # Ustawienie koloru tła na czerwony
@@ -144,24 +146,28 @@ class Fullscreen_Window:
 
 
     def edit_text(self,  height, width, r, c, px, py):
-        edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="groove", padx=10, pady=10)
+        edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="solid", padx=10, pady=10)
         edit_text.grid(r, c) #expand=False, fill="both"
         return edit_text.get("1.0", "end-1c")  
 
-    def toggle_button(self, text, r, c, px, py):
+    def toggle_button(self):
+        def bfun():
+            self.ttk.style.theme_use(themes[var1.get()])
+            self.toggle.configure(text=themes[var1.get()].capitalize())
+            #self.frame.style.theme_use(themes[var1.get()])
 
-        def bfun(self, var):
-            self.style = themes[int(var)]
-
-        var1 = 0 #tk.IntVar()
-        toggle = ttk.Checkbutton(
-            bootstyle = "dange, round-toggle",
-            text = text,
+        var1 = ttk.IntVar()
+        self.toggle = ttk.Checkbutton(
+            bootstyle = "danger, round-toggle",
+            text = "Dark",
             variable=var1, 
-            onvalue = 0, 
-            offvalue=1,
-            command=bfun(self, var1))
-        toggle.grid(padx = px, pady = py, row = r, column=c)
+            onvalue = 1, 
+            offvalue=0,
+            command=bfun)
+        self.toggle.grid(padx = 10, pady = 10, row = 0, column=3, sticky='ne')
+        #self.toggle.pack(padx = 10, pady = 10, side=("right", 'top'))
+
+        
 
         
 
@@ -201,10 +207,15 @@ class Fullscreen_Window:
         """
         
 
-class Search_settings(ttk.Frame):
+class SearchSettings(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
+        parent.frame['borderwidth'] = 1
         
+        #parent.frame['padding'] = (5,10,5,10)
+        
+
+
 
         def find_data(date):
             var.properties[2] = date.get()
@@ -213,20 +224,27 @@ class Search_settings(ttk.Frame):
             print(f"2: {var.properties}")
             parent.label1.config(text=var.properties[2])
 
+            if type(var.properties[2]) == str:
+                print('succes')
+                SearchResult(parent)
+
 
         # Przycisk menu
         hours = [f"{hour:02d}:00" for hour in range(24)]
         def change2(text):
             self.menu2.configure(text=text)
             var.properties[0] = text
+        
+        mystyle = ttk.Style()
+        mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
 
-        self.menu2 = ttk.Menubutton(parent.frame, bootstyle=themes[current_theme], text="Cel")
-        self.menu2.grid(padx=10, pady=10, row=0, column=0, sticky="e", columnspan=1)  # Wyrównanie do środka poziomo
+        self.menu2 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="Cel")
+        self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e", columnspan=1)
 
         # Itemy w menu
         in_menu2 = ttk.Menu(self.menu2)
-        item_var2 = tk.StringVar()  # Utwórz zmienną dla opcji
+        item_var2 = tk.StringVar() 
         for x in ('Nowy Targ', "Nowy Sącz", "Słomniki"):
             in_menu2.add_radiobutton(label=x, variable=item_var2, command=lambda x=x: change2(x))
         self.menu2['menu'] = in_menu2
@@ -238,26 +256,41 @@ class Search_settings(ttk.Frame):
             var.properties[1] = text
             #parent.label1.config(text=text)
 
-        self.menu1 = ttk.Menubutton(parent.frame, bootstyle=themes[current_theme], text="00:00")
-        self.menu1.grid(padx=10, pady=10, row=0, column=1, sticky="e", columnspan=1) 
+        self.menu1 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="00:00")
+        self.menu1.grid(padx=10, pady=10, row=1, column=1, sticky="e", columnspan=1) 
 
         # Itemy w menu
         in_menu1 = ttk.Menu(self.menu1)
-        item_var = tk.StringVar()  # Utwórz zmienną dla opcji
+        item_var = tk.StringVar()
         for x in hours:
             in_menu1.add_radiobutton(label=x, variable=item_var, command=lambda x=x: change1(x))
         self.menu1['menu'] = in_menu1
 
-        self.cal = ttk.DateEntry(parent.frame, bootstyle=themes[current_theme])
-        self.cal.grid(padx=10, pady=10, row=0, column=2, sticky="e")  
+        self.cal = ttk.DateEntry(parent.frame, bootstyle=themes[parent.current_theme])
+        self.cal.grid(padx=10, pady=10, row=1, column=2, sticky="e")  
 
         self.sv = tk.StringVar()
         self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: find_data(sv))
         self.cal.entry.configure(textvariable=self.sv)
 
-        self.find = ttk.Button(parent.frame, bootstyle=themes[current_theme], text="Szukaj", command=update)
-        self.find.grid(padx=10, pady=10, row=0, column=3, sticky="e")
+        self.find = ttk.Button(parent.frame, bootstyle=themes[parent.current_theme], text="Szukaj", command=update)
+        self.find.grid(padx=10, pady=10, row=1, column=3, sticky="e")
+
+class SearchResult(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__()
+
+        self.frame1 = tk.Frame(  bd=2, relief="solid", padx=10, pady=10)
+        #self.frame.pack(padx=20, pady=20)
+        self.frame1.grid(padx = 10, pady = 10, row = 3, column=0, sticky='ne')
+        self.label1 = ttk.Label(self.frame1 ,text=var.properties[0])
+        #self.label1.pack(padx=20, pady=20)
+        self.label1.grid(padx = 10, pady = 10, row = 0, column=0,sticky='ne')
+        self.label1 = ttk.Label(self.frame1 ,text=var.properties[0])
+        #self.label1.pack(padx=20, pady=20)
+        self.label1.grid(padx = 10, pady = 10, row = 0, column=1,sticky='ne')
         
+
 
 
 

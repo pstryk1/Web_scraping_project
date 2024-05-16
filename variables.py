@@ -8,3 +8,4 @@ from datetime import date
 hour = ''
 data = ''
 properties = [0, 0, 0]
+theme = 0
