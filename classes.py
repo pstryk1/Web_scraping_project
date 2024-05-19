@@ -93,34 +93,10 @@ class FullscreenWindow:
         self.label1.grid(padx = 10, pady = 10, row = 2, column=0,sticky='n')
         
         SearchSettings(self)
-        
-
-        #frame1 = ttk.Button(self.frame)  # Ustawienie koloru tła na czerwony
-        #frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
-        #self.frame.config(background='#ff0000')
-        #self.frame.columnconfigure(0, weight=1) 
-        #self.frame.rowconfigure(0, weight=1)
-        #self.ttk.pack_propagate()
-        #self.columnconfigure(0, weight=1)  # Ustawienie obu kolumn na wagę 1
-        #self.columnconfigure(1, weight=1)
-        #self.rowconfigure(0, weight=1)
-        #frame1 = ttk.Button(self.frame)  # Ustawienie koloru tła na czerwony
-        #frame1.grid(row=0, column=0, padx=100, pady=100, sticky="nesw")
-        #self.napis = ttk.Label(text='')
-        #self.napis.grid(row=1, column=6, )
-        
-        #self.find_button(1, 4, 20, 20, label1)
-        #self.date_button(1, 5, 20, 20, label1)
-        #mainScreen.edit_text(5, 100)
-        #mainScreen.edit_text(5, 100)
-        #mainScreen.toggle_button("przycisk")
-        #self.choose_date(1, 2, 20, 20)
 
         self.state = False
         self.ttk.bind("<F11>", self.toggle_fullscreen)
         self.ttk.bind("<Escape>", self.end_fullscreen)
-
-
 
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  
@@ -161,36 +137,6 @@ class FullscreenWindow:
             command=bfun)
         self.toggle.grid(padx = 10, pady = 10, row = 0, column=0, sticky='ne')
         #self.toggle.pack(padx = 10, pady = 10, side=("right", 'top'))
-
-    """
-    def choose_date(self, r, c, px, py):
-          # Tworzymy StringVar dla daty
-
-        # Funkcja wywoływana przy aktualizacji wartości pola tekstowego
-        def update_date(event):
-            var.data = event.get()
-            
-    def find_button(self, r, c, px, py, mylabel):
-        def update_label():
-            #selected_date = self.cal.get_date()
-            #self.label.config(text="Selected Date: " + var.data)
-            print(var.data)
-            
-
-        button = ttk.Button(text="Find Date", command=update_label)
-        button.grid(padx=px, pady=py, row=r, column=c)
-
-    def date_button(self, r, c, px, py, mylabel):
-        def update_label():
-            #selected_date = self.cal.get_date()
-            #self.label.config(text="Selected Date: " + var.data)
-            napis = ttk.Label(text=var.data)
-            napis.grid(row=7, column=2)
-            
-
-        button = ttk.Button(text="data", command=update_label())
-        button.grid(padx=px, pady=py, row=r, column=c)
-        """
         
 
 class SearchSettings(ttk.Frame):
@@ -270,7 +216,6 @@ class SearchSettings(ttk.Frame):
         mystyle = ttk.Style()
         mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
-
         self.menu3 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="Dokąd jedziemy?", width=30)
         self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e", columnspan=1)
 
@@ -307,7 +252,7 @@ class SearchSettings(ttk.Frame):
         self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: find_data(sv))
         self.cal.entry.configure(textvariable=self.sv)
 
-        ##########
+        ########## Przycisk wyszukiwania
 
         self.find = ttk.Button(parent.frame, bootstyle=themes[parent.current_theme], text="Szukaj", command=update)
         self.find.grid(padx=10, pady=10, row=1, column=5, sticky="e")
@@ -373,11 +318,3 @@ class SearchResult(ttk.Frame):
             print("No results")
             return "No results"
             
-
-
-#class Maxbus_Limanowa:
-
-    #def __init__(self, day_sign, route, dep_time, arr_time):
-
-#print(Szwagropol('ZAK'))
-#print(Maxbus_scrapped())
