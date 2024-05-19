@@ -142,9 +142,6 @@ class FullscreenWindow:
     def colors(self, color, fontcolor):
         self.ttk.configure(bg=color, fg = fontcolor)
 
-
-
-
     def edit_text(self,  height, width, r, c, px, py):
         edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="solid", padx=10, pady=10)
         edit_text.grid(r, c) #expand=False, fill="both"
@@ -167,11 +164,6 @@ class FullscreenWindow:
         self.toggle.grid(padx = 10, pady = 10, row = 0, column=3, sticky='ne')
         #self.toggle.pack(padx = 10, pady = 10, side=("right", 'top'))
 
-        
-
-        
-
-
     """
     def choose_date(self, r, c, px, py):
           # Tworzymy StringVar dla daty
@@ -180,10 +172,6 @@ class FullscreenWindow:
         def update_date(event):
             var.data = event.get()
             
-
-        
-        
-
     def find_button(self, r, c, px, py, mylabel):
         def update_label():
             #selected_date = self.cal.get_date()
@@ -214,50 +202,92 @@ class SearchSettings(ttk.Frame):
         
         #parent.frame['padding'] = (5,10,5,10)
         
-
-
+        def switch():
+            holder = var.properties[0]
+            var.properties[0] = var.properties[1]
+            var.properties[1] = holder
+            self.menu2.configure(text=var.properties[0])
+            self.menu3.configure(text=var.properties[1])
+            pass
 
         def find_data(date):
-            var.properties[2] = date.get()
+            var.properties[3] = date.get()
             
         def update():
             print(f"2: {var.properties}")
-            parent.label1.config(text=var.properties[2])
+            parent.label1.config(text=var.properties[1])
 
             if type(var.properties[2]) == str:
                 print('succes')
                 SearchResult(parent)
 
+        ##########
 
         # Przycisk menu
         hours = [f"{hour:02d}:00" for hour in range(24)]
         def change2(text):
             self.menu2.configure(text=text)
             var.properties[0] = text
+            if text != "Kraków":
+                self.menu3.configure(text="Kraków")
+                var.properties[1] = "Kraków"
+                self.menu3['state'] = "disabled"
+            else:
+                self.menu3['state'] = "enable"
+
         
         mystyle = ttk.Style()
         mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
 
-        self.menu2 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="Cel")
+        self.menu2 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="Z kąd jedziemy?", width=30)
         self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e", columnspan=1)
 
         # Itemy w menu
         in_menu2 = ttk.Menu(self.menu2)
         item_var2 = tk.StringVar() 
-        for x in ('Nowy Targ', "Nowy Sącz", "Słomniki"):
+        for x in ('Kraków', 'Nowy Targ', "Nowy Sącz", "Słomniki", 'Zakopane'):
             in_menu2.add_radiobutton(label=x, variable=item_var2, command=lambda x=x: change2(x))
         self.menu2['menu'] = in_menu2
+        #########
 
+        self.switch1 = ttk.Button(parent.frame, bootstyle=themes[parent.current_theme], text="<>", command=switch)
+        self.switch1.grid(padx=10, pady=10, row=1, column=1, sticky="e")
 
+        self.switch1['state'] = "disabled"
+
+        #########
+
+         # Przycisk menu
+        hours = [f"{hour:02d}:00" for hour in range(24)]
+        def change3(text):
+            self.menu3.configure(text=text)
+            self.switch1['state'] = "enable"
+            var.properties[1] = text
+        
+        mystyle = ttk.Style()
+        mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
+            
+
+        self.menu3 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="Dokąd jedziemy?", width=30)
+        self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e", columnspan=1)
+
+        # Itemy w menu
+        in_menu3 = ttk.Menu(self.menu2)
+        item_var3 = tk.StringVar() 
+        for x in ('Kraków', 'Nowy Targ', "Nowy Sącz", "Słomniki", 'Zakopane'):
+            in_menu3.add_radiobutton(label=x, variable=item_var3, command=lambda x=x: change3(x))
+        self.menu3['menu'] = in_menu3
+
+        ##########
 
         def change1(text):
             self.menu1.configure(text=text)
-            var.properties[1] = text
+            var.properties[2] = text
             #parent.label1.config(text=text)
 
         self.menu1 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="00:00")
-        self.menu1.grid(padx=10, pady=10, row=1, column=1, sticky="e", columnspan=1) 
+        self.menu1.grid(padx=10, pady=10, row=1, column=3, sticky="e", columnspan=1) 
 
         # Itemy w menu
         in_menu1 = ttk.Menu(self.menu1)
@@ -266,29 +296,48 @@ class SearchSettings(ttk.Frame):
             in_menu1.add_radiobutton(label=x, variable=item_var, command=lambda x=x: change1(x))
         self.menu1['menu'] = in_menu1
 
+        ##########
+
         self.cal = ttk.DateEntry(parent.frame, bootstyle=themes[parent.current_theme])
-        self.cal.grid(padx=10, pady=10, row=1, column=2, sticky="e")  
+        self.cal.grid(padx=10, pady=10, row=1, column=4, sticky="e")  
 
         self.sv = tk.StringVar()
         self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: find_data(sv))
         self.cal.entry.configure(textvariable=self.sv)
 
+        ##########
+
         self.find = ttk.Button(parent.frame, bootstyle=themes[parent.current_theme], text="Szukaj", command=update)
-        self.find.grid(padx=10, pady=10, row=1, column=3, sticky="e")
+        self.find.grid(padx=10, pady=10, row=1, column=5, sticky="e")
+
+        #########
+        cbvalues = ['option 1', 'option 2', 'option 3']
+        self.cb = ttk.Combobox(parent.frame, bootstyle='succes', values=cbvalues)
+        self.cb.grid(padx=10, pady=10, row=1, column=6, sticky="e")
 
 class SearchResult(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
+        #nawigator po zawiłych listach mateusza
+        if var.properties[1] == "Zakopane":
+            var.destination = 1
+        else:
+            var.destination = 0
+            
+
+
+
 
         self.frame1 = tk.Frame(  bd=2, relief="solid", padx=10, pady=10)
         #self.frame.pack(padx=20, pady=20)
         self.frame1.grid(padx = 10, pady = 10, row = 3, column=0, sticky='ne')
-        self.label1 = ttk.Label(self.frame1 ,text=var.properties[0])
-        #self.label1.pack(padx=20, pady=20)
-        self.label1.grid(padx = 10, pady = 10, row = 0, column=0,sticky='ne')
-        self.label1 = ttk.Label(self.frame1 ,text=var.properties[0])
-        #self.label1.pack(padx=20, pady=20)
-        self.label1.grid(padx = 10, pady = 10, row = 0, column=1,sticky='ne')
+        ####
+        resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
+        for i in resultData:
+            self.label1 = ttk.Label(self.frame1 ,text=i)
+            #self.label1.pack(padx=20, pady=20)
+            self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='ne')
+            
         
 
 
@@ -304,4 +353,5 @@ class SearchResult(ttk.Frame):
 
     #def __init__(self, day_sign, route, dep_time, arr_time):
 
-print(Szwagropol('ZAK'))
+#print(Szwagropol('ZAK'))
+print(Maxbus_scrapped())

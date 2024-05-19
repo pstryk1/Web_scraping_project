@@ -7,5 +7,6 @@ import sys
 from datetime import date
 hour = ''
 data = ''
-properties = [0, 0, 0]
+properties = [0, 0, 0, 0]
 theme = 0
+destination = ""
