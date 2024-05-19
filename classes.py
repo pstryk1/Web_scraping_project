@@ -6,6 +6,7 @@ import requests
 import sys
 from datetime import date
 import variables as var
+import webbrowser as web
 
 themes = ('darkly', 'flatly')
 
@@ -84,10 +85,9 @@ class FullscreenWindow:
         self.ttk.state('zoomed')
         self.current_theme= 0
         self.toggle_button()
-        self.frame = tk.Frame(self.ttk,   bd=2, relief="solid", padx=10, pady=10)#ta ramka jest przeklęta i za chiny nie chce sie przestawić na prawo
-        #self.frame.pack(padx=20, pady=20)
-        self.frame.grid(padx = 10, pady = 10, row = 1, column=0, sticky='ne')
+        
 
+        #self.frame['borderwidth'] = 1
         self.label1 = ttk.Label(text='Wyniki wyszukiwania')
         #self.label1.pack(padx=20, pady=20)
         self.label1.grid(padx = 10, pady = 10, row = 2, column=0,sticky='n')
@@ -142,7 +142,11 @@ class FullscreenWindow:
 class SearchSettings(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
-        parent.frame['borderwidth'] = 1
+
+        self.frame = tk.Frame(parent.ttk,   bd=2, relief="solid", padx=10, pady=10)#ta ramka jest przeklęta i za chiny nie chce sie przestawić na prawo
+        self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='e')
+        self.frame['borderwidth'] = 1
+        
         
         #parent.frame['padding'] = (5,10,5,10)
         
@@ -188,7 +192,7 @@ class SearchSettings(ttk.Frame):
         mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
 
-        self.menu2 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="Z kąd jedziemy?", width=30)
+        self.menu2 = ttk.Menubutton(self.frame, bootstyle=themes[parent.current_theme], text="Z kąd jedziemy?", width=30)
         self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e", columnspan=1)
 
         # Itemy w menu
@@ -199,7 +203,7 @@ class SearchSettings(ttk.Frame):
         self.menu2['menu'] = in_menu2
         #########
 
-        self.switch1 = ttk.Button(parent.frame, bootstyle=themes[parent.current_theme], text="<>", command=switch)
+        self.switch1 = ttk.Button(self.frame, bootstyle=themes[parent.current_theme], text="<>", command=switch)
         self.switch1.grid(padx=10, pady=10, row=1, column=1, sticky="e")
 
         self.switch1['state'] = "disabled"
@@ -216,7 +220,7 @@ class SearchSettings(ttk.Frame):
         mystyle = ttk.Style()
         mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
-        self.menu3 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="Dokąd jedziemy?", width=30)
+        self.menu3 = ttk.Menubutton(self.frame, bootstyle=themes[parent.current_theme], text="Dokąd jedziemy?", width=30)
         self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e", columnspan=1)
 
         # Itemy w menu
@@ -233,7 +237,7 @@ class SearchSettings(ttk.Frame):
             var.properties[2] = text
             #parent.label1.config(text=text)
 
-        self.menu1 = ttk.Menubutton(parent.frame, bootstyle=themes[parent.current_theme], text="00:00")
+        self.menu1 = ttk.Menubutton(self.frame, bootstyle=themes[parent.current_theme], text="00:00")
         self.menu1.grid(padx=10, pady=10, row=1, column=3, sticky="e", columnspan=1) 
 
         # Itemy w menu
@@ -245,7 +249,7 @@ class SearchSettings(ttk.Frame):
 
         ##########
 
-        self.cal = ttk.DateEntry(parent.frame, bootstyle=themes[parent.current_theme])
+        self.cal = ttk.DateEntry(self.frame, bootstyle=themes[parent.current_theme])
         self.cal.grid(padx=10, pady=10, row=1, column=4, sticky="e")  
 
         self.sv = tk.StringVar()
@@ -254,7 +258,7 @@ class SearchSettings(ttk.Frame):
 
         ########## Przycisk wyszukiwania
 
-        self.find = ttk.Button(parent.frame, bootstyle=themes[parent.current_theme], text="Szukaj", command=update)
+        self.find = ttk.Button(self.frame, bootstyle=themes[parent.current_theme], text="Szukaj", command=update)
         self.find.grid(padx=10, pady=10, row=1, column=5, sticky="e")
 
         #########
@@ -265,12 +269,19 @@ class SearchSettings(ttk.Frame):
 class SearchResult(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
+
+
+        def openWeb(comp):
+            if comp == "Szwagropol":
+                web.open("https://www.szwagropol.pl/")
+
         resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
         resultData = self.navigate()
 
         self.frame1 = tk.Frame(  bd=2, relief="solid", padx=10, pady=10)
         #self.frame.pack(padx=20, pady=20)
         self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
+        self.frame1['borderwidth'] = 1
         ####
         #
         for i in resultData:
@@ -279,6 +290,11 @@ class SearchResult(ttk.Frame):
                 self.label1.config(bootstyle = 'warning')
             #self.label1.pack(padx=20, pady=20)
             self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='ne')
+
+        self.wabpage = ttk.Button(self.frame1, bootstyle=themes[parent.current_theme], text="Strona", command=openWeb(var.company))
+        self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="e")
+
+    
 
     def navigate(self):
         #nawigator po zawiłych listach mateusza
