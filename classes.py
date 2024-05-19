@@ -77,8 +77,6 @@ class FullscreenWindow:
     def __init__(self):
         super().__init__()
         
-
-
         self.ttk = ttk.Window(themename=themes[0])
         self.ttk.title("QuoCalCus - znajdź swoj cel")
         self.ttk.attributes("-topmost", True)
@@ -90,9 +88,9 @@ class FullscreenWindow:
         #self.frame.pack(padx=20, pady=20)
         self.frame.grid(padx = 10, pady = 10, row = 1, column=0, sticky='ne')
 
-        self.label1 = ttk.Label(text='')
+        self.label1 = ttk.Label(text='Wyniki wyszukiwania')
         #self.label1.pack(padx=20, pady=20)
-        self.label1.grid(padx = 10, pady = 10, row = 2, column=0,sticky='ne')
+        self.label1.grid(padx = 10, pady = 10, row = 2, column=0,sticky='n')
         
         SearchSettings(self)
         
@@ -125,7 +123,7 @@ class FullscreenWindow:
 
 
     def toggle_fullscreen(self, event=None):
-        self.state = not self.state  # Just toggling the boolean
+        self.state = not self.state  
         self.ttk.attributes("-fullscreen", self.state)
         return "break"
 
@@ -161,7 +159,7 @@ class FullscreenWindow:
             onvalue = 1, 
             offvalue=0,
             command=bfun)
-        self.toggle.grid(padx = 10, pady = 10, row = 0, column=3, sticky='ne')
+        self.toggle.grid(padx = 10, pady = 10, row = 0, column=0, sticky='ne')
         #self.toggle.pack(padx = 10, pady = 10, side=("right", 'top'))
 
     """
@@ -214,16 +212,20 @@ class SearchSettings(ttk.Frame):
             var.properties[3] = date.get()
             
         def update():
+            var.resultRow = 3
+            if var.res1 != 0:
+                del var.res1
             print(f"2: {var.properties}")
-            parent.label1.config(text=var.properties[1])
 
             if type(var.properties[2]) == str:
-                print('succes')
-                SearchResult(parent)
+                
+                var.res1 = SearchResult(parent)
+                var.resultRow +=1
+                res2= SearchResult(parent)
 
         ##########
 
-        # Przycisk menu
+        # Przycisk menu zkad jedziemy
         hours = [f"{hour:02d}:00" for hour in range(24)]
         def change2(text):
             self.menu2.configure(text=text)
@@ -258,7 +260,7 @@ class SearchSettings(ttk.Frame):
 
         #########
 
-         # Przycisk menu
+         # Przycisk menu do kad jedziemy
         hours = [f"{hour:02d}:00" for hour in range(24)]
         def change3(text):
             self.menu3.configure(text=text)
@@ -311,42 +313,66 @@ class SearchSettings(ttk.Frame):
         self.find.grid(padx=10, pady=10, row=1, column=5, sticky="e")
 
         #########
-        cbvalues = ['option 1', 'option 2', 'option 3']
-        self.cb = ttk.Combobox(parent.frame, bootstyle='succes', values=cbvalues)
-        self.cb.grid(padx=10, pady=10, row=1, column=6, sticky="e")
+        #cbvalues = ['option 1', 'option 2', 'option 3']
+        #self.cb = ttk.Combobox(parent.frame, bootstyle='succes', values=cbvalues)
+        #self.cb.grid(padx=10, pady=10, row=1, column=6, sticky="e")
 
 class SearchResult(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
-        #nawigator po zawiłych listach mateusza
-        if var.properties[1] == "Zakopane":
-            var.destination = 1
-        else:
-            var.destination = 0
-            
-
-
-
+        resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
+        resultData = self.navigate()
 
         self.frame1 = tk.Frame(  bd=2, relief="solid", padx=10, pady=10)
         #self.frame.pack(padx=20, pady=20)
-        self.frame1.grid(padx = 10, pady = 10, row = 3, column=0, sticky='ne')
+        self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
         ####
-        resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
+        #
         for i in resultData:
             self.label1 = ttk.Label(self.frame1 ,text=i)
+            if resultData == "No results":
+                self.label1.config(bootstyle = 'warning')
             #self.label1.pack(padx=20, pady=20)
             self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='ne')
+
+    def navigate(self):
+        #nawigator po zawiłych listach mateusza
+        if var.properties[1] == "Zakopane":
+            var.relation=0
+            var.destination = 1
+            var.dest_list = Szwagropol('ZAK')
+            var.company = "Szwagropol"
+        elif var.properties[1] == "Nowy Sącz":
+            var.relation=0
+            var.destination = 1
+            var.dest_list = Szwagropol('NS')
+            var.company = "Szwagropol"
+        elif var.properties[1] == "Kraków":
+            var.relation=1
+            if var.properties[0] == "Zakopane":
+                var.destination = 0
+                var.dest_list = Szwagropol('ZAK')
+            elif var.properties[0] == "Nowy Sącz":
+                var.destination = 0
+                var.dest_list = Szwagropol('NS')
+            var.company = "Szwagropol"
+
+        res = [var.company]
+        day = 0
+        finded = False
+        for i in var.dest_list[var.destination]:
             
-        
+            if i[0][:2] == var.properties[2][:2]:
+                res.extend(i)
+                finded = True
 
-
-
-
-
-
-
-
+                return res
+            else:
+                day = day + 1
+        if day >=24 or finded == False:
+            print("No results")
+            return "No results"
+            
 
 
 #class Maxbus_Limanowa:
@@ -354,4 +380,4 @@ class SearchResult(ttk.Frame):
     #def __init__(self, day_sign, route, dep_time, arr_time):
 
 #print(Szwagropol('ZAK'))
-print(Maxbus_scrapped())
+#print(Maxbus_scrapped())

@@ -11,22 +11,5 @@ import variables as var
 
 
 if __name__ == '__main__':
-
     mainScreen = cs.FullscreenWindow()
- 
-    #print(mainScreen.seldate())
- 
-    
-
-
-
-
-
-
-
-
-
-
-
-
     mainScreen.ttk.mainloop()
