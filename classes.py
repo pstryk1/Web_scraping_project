@@ -8,7 +8,7 @@ from datetime import date
 import variables as var
 import webbrowser as web
 
-themes = ('darkly', 'flatly')
+themes = ('superhero', 'flatly')
 
 
 def Labels(label, bus):
@@ -79,8 +79,9 @@ class FullscreenWindow:
         super().__init__()
         
         self.ttk = ttk.Window(themename=themes[0])
-        self.ttk.title("QuoCalCus - znajdź swoj cel")
-        self.ttk.attributes("-topmost", True)
+        self.ttk.title("QuoCalCus - zkalkuluj swoją drogę!")
+        self.ttk.iconbitmap("images/logo_darkblue_copy.ico")
+        #self.ttk.attributes("-topmost", True)
         #self.tk.geometry("{0}x{1}+0+0".format(self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()))
         self.ttk.state('zoomed')
         self.current_theme= 0
@@ -88,11 +89,11 @@ class FullscreenWindow:
         
 
         #self.frame['borderwidth'] = 1
-        self.label1 = ttk.Label(text='Wyniki wyszukiwania')
+        self.label1 = ttk.Label(text='Wyniki wyszukiwania', font=("Monsterrat", 15))
         #self.label1.pack(padx=20, pady=20)
         self.label1.grid(padx = 10, pady = 10, row = 2, column=0,sticky='n')
         
-        SearchSettings(self)
+        SearchSettings(self) #tworzenie obiektu do wyszukiwania
 
         self.state = False
         self.ttk.bind("<F11>", self.toggle_fullscreen)
@@ -164,14 +165,17 @@ class SearchSettings(ttk.Frame):
         def update():
             var.resultRow = 3
             if var.res1 != 0:
-                del var.res1
+                var.res1.frame1.destroy()
+                var.res2.frame1.destroy()
+
             print(f"2: {var.properties}")
 
             if type(var.properties[2]) == str:
                 
                 var.res1 = SearchResult(parent)
                 var.resultRow +=1
-                res2= SearchResult(parent)
+                var.res2 = SearchResult(parent)
+            
 
         ##########
 
@@ -186,13 +190,9 @@ class SearchSettings(ttk.Frame):
                 self.menu3['state'] = "disabled"
             else:
                 self.menu3['state'] = "enable"
-
-        
-        mystyle = ttk.Style()
-        mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
 
-        self.menu2 = ttk.Menubutton(self.frame, bootstyle=themes[parent.current_theme], text="Z kąd jedziemy?", width=30)
+        self.menu2 = ttk.Menubutton(self.frame, bootstyle="outline", text="Z kąd jedziemy?", width=30)
         self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e", columnspan=1)
 
         # Itemy w menu
@@ -203,7 +203,7 @@ class SearchSettings(ttk.Frame):
         self.menu2['menu'] = in_menu2
         #########
 
-        self.switch1 = ttk.Button(self.frame, bootstyle=themes[parent.current_theme], text="<>", command=switch)
+        self.switch1 = ttk.Button(self.frame, bootstyle="outline", text="<>", command=switch)
         self.switch1.grid(padx=10, pady=10, row=1, column=1, sticky="e")
 
         self.switch1['state'] = "disabled"
@@ -220,7 +220,7 @@ class SearchSettings(ttk.Frame):
         mystyle = ttk.Style()
         mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
-        self.menu3 = ttk.Menubutton(self.frame, bootstyle=themes[parent.current_theme], text="Dokąd jedziemy?", width=30)
+        self.menu3 = ttk.Menubutton(self.frame, bootstyle="outline", text="Dokąd jedziemy?", width=30)
         self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e", columnspan=1)
 
         # Itemy w menu
@@ -237,7 +237,7 @@ class SearchSettings(ttk.Frame):
             var.properties[2] = text
             #parent.label1.config(text=text)
 
-        self.menu1 = ttk.Menubutton(self.frame, bootstyle=themes[parent.current_theme], text="00:00")
+        self.menu1 = ttk.Menubutton(self.frame, bootstyle="outline", text="00:00")
         self.menu1.grid(padx=10, pady=10, row=1, column=3, sticky="e", columnspan=1) 
 
         # Itemy w menu
@@ -263,7 +263,7 @@ class SearchSettings(ttk.Frame):
 
         #########
         #cbvalues = ['option 1', 'option 2', 'option 3']
-        #self.cb = ttk.Combobox(parent.frame, bootstyle='succes', values=cbvalues)
+        #self.cb = ttk.Combobox(self.frame, bootstyle='succes', values=cbvalues)
         #self.cb.grid(padx=10, pady=10, row=1, column=6, sticky="e")
 
 class SearchResult(ttk.Frame):
@@ -280,19 +280,19 @@ class SearchResult(ttk.Frame):
 
         self.frame1 = tk.Frame(  bd=2, relief="solid", padx=10, pady=10)
         #self.frame.pack(padx=20, pady=20)
-        self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
+        self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='ns')
         self.frame1['borderwidth'] = 1
         ####
         #
         for i in resultData:
-            self.label1 = ttk.Label(self.frame1 ,text=i)
+            self.label1 = ttk.Label(self.frame1 ,text=i, font=("Tahoma", 15))
             if resultData == "No results":
-                self.label1.config(bootstyle = 'warning')
+                self.label1.config(bootstyle = 'danger')
             #self.label1.pack(padx=20, pady=20)
-            self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='ne')
-
-        self.wabpage = ttk.Button(self.frame1, bootstyle=themes[parent.current_theme], text="Strona", command=openWeb(var.company))
-        self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="e")
+            self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='ns')
+        if resultData != "No results":
+            self.wabpage = ttk.Button(self.frame1, bootstyle=themes[parent.current_theme], text="Strona", command=lambda: openWeb(var.company))
+            self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
 
     
 
