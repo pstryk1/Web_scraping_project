@@ -83,17 +83,23 @@ class FullscreenWindow:
         self.ttk.iconbitmap("images/logo_darkblue_copy.ico")
         #self.ttk.attributes("-topmost", True)
         #self.tk.geometry("{0}x{1}+0+0".format(self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()))
+        self.ttk.grid_columnconfigure(0, weight=1)
+        self.ttk.grid_rowconfigure(1, weight=0)
+
         self.ttk.state('zoomed')
         self.current_theme= 0
         self.toggle_button()
         
 
+        SearchSettings(self) #tworzenie obiektu do wyszukiwania
+        
         #self.frame['borderwidth'] = 1
         self.label1 = ttk.Label(text='Wyniki wyszukiwania', font=("Monsterrat", 15))
-        #self.label1.pack(padx=20, pady=20)
-        self.label1.grid(padx = 10, pady = 10, row = 2, column=0,sticky='n')
+        self.label1.grid(padx = 10, pady = 10, row = 2, column=0, sticky='n')
+        self.label1.grid_rowconfigure(2, weight=2)
+        #
         
-        SearchSettings(self) #tworzenie obiektu do wyszukiwania
+        
 
         self.state = False
         self.ttk.bind("<F11>", self.toggle_fullscreen)
@@ -136,7 +142,7 @@ class FullscreenWindow:
             onvalue = 1, 
             offvalue=0,
             command=bfun)
-        self.toggle.grid(padx = 10, pady = 10, row = 0, column=0, sticky='ne')
+        self.toggle.grid(padx = 10, pady = 10, row = 0, column=0, sticky='e')
         #self.toggle.pack(padx = 10, pady = 10, side=("right", 'top'))
         
 
@@ -144,10 +150,14 @@ class SearchSettings(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
 
-        self.frame = tk.Frame(parent.ttk,   bd=2, relief="solid", padx=10, pady=10)#ta ramka jest przeklęta i za chiny nie chce sie przestawić na prawo
-        self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='e')
+        self.frame = tk.Frame(parent.ttk,   bd=2, relief="solid", padx=10, pady=10, width=100)
+        self.frame.pack_propagate(False)
+        self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='n')
         self.frame['borderwidth'] = 1
-        
+        #for i in range(6):
+            #self.frame.grid_columnconfigure(i, weight=1)
+            
+        #self.frame.grid_rowconfigure(1, weight=1)
         
         #parent.frame['padding'] = (5,10,5,10)
         
@@ -193,18 +203,18 @@ class SearchSettings(ttk.Frame):
             
 
         self.menu2 = ttk.Menubutton(self.frame, bootstyle="outline", text="Z kąd jedziemy?", width=30)
-        self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e", columnspan=1)
+        self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e")
 
         # Itemy w menu
         in_menu2 = ttk.Menu(self.menu2)
         item_var2 = tk.StringVar() 
         for x in ('Kraków', 'Nowy Targ', "Nowy Sącz", "Słomniki", 'Zakopane'):
-            in_menu2.add_radiobutton(label=x, variable=item_var2, command=lambda x=x: change2(x))
+            in_menu2.add_radiobutton(label=x, variable=item_var2, command=lambda x=x: change2(x), hidemargin="False")
         self.menu2['menu'] = in_menu2
         #########
 
         self.switch1 = ttk.Button(self.frame, bootstyle="outline", text="<>", command=switch)
-        self.switch1.grid(padx=10, pady=10, row=1, column=1, sticky="e")
+        self.switch1.grid(padx=10, pady=10, row=1, column=0, sticky="e")
 
         self.switch1['state'] = "disabled"
 
@@ -221,7 +231,7 @@ class SearchSettings(ttk.Frame):
         mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
             
         self.menu3 = ttk.Menubutton(self.frame, bootstyle="outline", text="Dokąd jedziemy?", width=30)
-        self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e", columnspan=1)
+        self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e")
 
         # Itemy w menu
         in_menu3 = ttk.Menu(self.menu2)
@@ -238,7 +248,7 @@ class SearchSettings(ttk.Frame):
             #parent.label1.config(text=text)
 
         self.menu1 = ttk.Menubutton(self.frame, bootstyle="outline", text="00:00")
-        self.menu1.grid(padx=10, pady=10, row=1, column=3, sticky="e", columnspan=1) 
+        self.menu1.grid(padx=10, pady=10, row=1, column=3, sticky="e") 
 
         # Itemy w menu
         in_menu1 = ttk.Menu(self.menu1)
@@ -275,12 +285,12 @@ class SearchResult(ttk.Frame):
             if comp == "Szwagropol":
                 web.open("https://www.szwagropol.pl/")
 
-        resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
+        #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
         resultData = self.navigate()
 
         self.frame1 = tk.Frame(  bd=2, relief="solid", padx=10, pady=10)
         #self.frame.pack(padx=20, pady=20)
-        self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='ns')
+        self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
         self.frame1['borderwidth'] = 1
         ####
         #
@@ -289,7 +299,7 @@ class SearchResult(ttk.Frame):
             if resultData == "No results":
                 self.label1.config(bootstyle = 'danger')
             #self.label1.pack(padx=20, pady=20)
-            self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='ns')
+            self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='n')
         if resultData != "No results":
             self.wabpage = ttk.Button(self.frame1, bootstyle=themes[parent.current_theme], text="Strona", command=lambda: openWeb(var.company))
             self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
@@ -297,7 +307,7 @@ class SearchResult(ttk.Frame):
     
 
     def navigate(self):
-        #nawigator po zawiłych listach mateusza
+        #zawiły nawigator po zawiłych listach mateusza
         if var.properties[1] == "Zakopane":
             var.relation=0
             var.destination = 1
