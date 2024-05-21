@@ -8,7 +8,7 @@ from datetime import date
 import variables as var
 import webbrowser as web
 
-themes = ('superhero', 'flatly')
+themes = ('quocalcus', 'flatly')
 
 
 def Labels(label, bus):
@@ -92,7 +92,7 @@ class FullscreenWindow:
         
 
         SearchSettings(self) #tworzenie obiektu do wyszukiwania
-        
+
         #self.frame['borderwidth'] = 1
         self.label1 = ttk.Label(text='Wyniki wyszukiwania', font=("Monsterrat", 15))
         self.label1.grid(padx = 10, pady = 10, row = 2, column=0, sticky='n')
@@ -189,6 +189,15 @@ class SearchSettings(ttk.Frame):
 
         ##########
 
+        mystyle = ttk.Style()
+        mystyle.configure("quocalcus.Outline.TMenubutton", font=("Tahoma", 20))
+
+        buttonStyle = ttk.Style()
+        buttonStyle.configure("quocalcus.Outline.TButton", font=("Tahoma", 20))
+
+        #dateEntryStyle = ttk.Style()
+        #dateEntryStyle.configure("quocalcus.Outline.TButton", font=("Tahoma", 20))
+
         # Przycisk menu zkad jedziemy
         hours = [f"{hour:02d}:00" for hour in range(24)]
         def change2(text):
@@ -202,7 +211,7 @@ class SearchSettings(ttk.Frame):
                 self.menu3['state'] = "enable"
             
 
-        self.menu2 = ttk.Menubutton(self.frame, bootstyle="outline", text="Z kąd jedziemy?", width=30)
+        self.menu2 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Z kąd jedziemy?")
         self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e")
 
         # Itemy w menu
@@ -213,8 +222,8 @@ class SearchSettings(ttk.Frame):
         self.menu2['menu'] = in_menu2
         #########
 
-        self.switch1 = ttk.Button(self.frame, bootstyle="outline", text="<>", command=switch)
-        self.switch1.grid(padx=10, pady=10, row=1, column=0, sticky="e")
+        self.switch1 = ttk.Button(self.frame, style="quocalcus.Outline.TButton", text="<>", command=switch)
+        self.switch1.grid(padx=10, pady=10, row=1, column=1, sticky="")
 
         self.switch1['state'] = "disabled"
 
@@ -227,10 +236,9 @@ class SearchSettings(ttk.Frame):
             self.switch1['state'] = "enable"
             var.properties[1] = text
         
-        mystyle = ttk.Style()
-        mystyle.configure("darkly.Outline.TButton", font=("Monsterrat", 18))
+        
             
-        self.menu3 = ttk.Menubutton(self.frame, bootstyle="outline", text="Dokąd jedziemy?", width=30)
+        self.menu3 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Dokąd jedziemy?")
         self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e")
 
         # Itemy w menu
@@ -247,7 +255,7 @@ class SearchSettings(ttk.Frame):
             var.properties[2] = text
             #parent.label1.config(text=text)
 
-        self.menu1 = ttk.Menubutton(self.frame, bootstyle="outline", text="00:00")
+        self.menu1 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="00:00")
         self.menu1.grid(padx=10, pady=10, row=1, column=3, sticky="e") 
 
         # Itemy w menu
@@ -268,7 +276,7 @@ class SearchSettings(ttk.Frame):
 
         ########## Przycisk wyszukiwania
 
-        self.find = ttk.Button(self.frame, bootstyle=themes[parent.current_theme], text="Szukaj", command=update)
+        self.find = ttk.Button(self.frame, style="quocalcus.Outline.TButton", text="Szukaj", command=update)
         self.find.grid(padx=10, pady=10, row=1, column=5, sticky="e")
 
         #########
