@@ -195,6 +195,9 @@ class SearchSettings(ttk.Frame):
         buttonStyle = ttk.Style()
         buttonStyle.configure("quocalcus.Outline.TButton", font=("Tahoma", 20))
 
+        dateStyle = ttk.Style()
+        dateStyle.configure("quocalcus.TCalendar", font=("Tahoma", 20))
+
         #dateEntryStyle = ttk.Style()
         #dateEntryStyle.configure("quocalcus.Outline.TButton", font=("Tahoma", 20))
 
@@ -211,7 +214,7 @@ class SearchSettings(ttk.Frame):
                 self.menu3['state'] = "enable"
             
 
-        self.menu2 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Z kąd jedziemy?")
+        self.menu2 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Z kąd jedziemy?", width=15)
         self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e")
 
         # Itemy w menu
@@ -238,7 +241,7 @@ class SearchSettings(ttk.Frame):
         
         
             
-        self.menu3 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Dokąd jedziemy?")
+        self.menu3 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Dokąd jedziemy?", width=15)
         self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e")
 
         # Itemy w menu
@@ -267,7 +270,7 @@ class SearchSettings(ttk.Frame):
 
         ##########
 
-        self.cal = ttk.DateEntry(self.frame, bootstyle=themes[parent.current_theme])
+        self.cal = ttk.DateEntry(self.frame, style="quocalcus.TCalendar")
         self.cal.grid(padx=10, pady=10, row=1, column=4, sticky="e")  
 
         self.sv = tk.StringVar()
