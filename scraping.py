@@ -23,6 +23,6 @@ busik.szwagropol('Kraków','Nowy Sącz', '08:00', 'Sb')
 
 print(busik.start)
 print(busik.destination)
-print(busik.top3_arr_time[0])
 print(busik.top3_dep_time[0])
+print(busik.top3_arr_time[0])
 print(busik.day_label)

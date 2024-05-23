@@ -32,7 +32,7 @@ def Maxbus():
     tab = scrape.find_all('tr')
 
     return tab
-
+'''
 def Pociag(start, destination, date, hour):
     if start  == 'Nowy Sącz' or destination == 'Nowy Sącz':
         page = f'https://kolejemalopolskie.com.pl/pl/wyszukiwarka-polaczen#wyniki-wyszukiwania/1715709958533/Krak%C3%B3w/Nowy%20S%C4%85cz/c%7C55156/c%7C60585/14.05.2024/--%20%3A%20--/0'
@@ -43,9 +43,9 @@ def Pociag(start, destination, date, hour):
     time.sleep(10)
     scrape = bs(query.text, 'lxml')
     data_1 = scrape.find_all('div')
-
-
     return data_1
+'''
+
 
 class Fullscreen_Window:
 
@@ -169,8 +169,8 @@ class bus:
 
         self.start = start
         self.destination = destination
-        self.top3_arr_time = tuple([i[0] for i in top3_results])
-        self.top3_dep_time = tuple([i[1] for i in top3_results])
+        self.top3_arr_time = tuple([i[1] for i in top3_results])
+        self.top3_dep_time = tuple([i[0] for i in top3_results])
         self.day_label = day
 
 
@@ -189,5 +189,5 @@ class bus:
 
 
 
-print(Pociag('Kraków', 'Nowy Sącz', '16-05-2024', '05:00'))
+#print(Pociag('Kraków', 'Nowy Sącz', '16-05-2024', '05:00'))
 #print(Maxbus())
