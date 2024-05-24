@@ -9,43 +9,6 @@ import time
 
 themes = ('darkly', 'flatly')
 
-def Labels(label, bus):
-    if bus == "Szwagropol":
-        all_labels = {
-            '(1-5)': 'Pn-Pt',
-            '(1-6)': 'Pn-Sb',
-            '(5-7)': 'Pt-Nd',
-            '(6-7)': 'Sb-Nd',
-            '(1-5,7)': 'Nd-Pt',
-            '(5)': 'Pt',
-            '(6)': 'Sb',
-            '(7)': 'Nd'
-        }
-
-    return all_labels[label]
-
-def Maxbus():
-    page = 'https://maxbus.com.pl/rozklad/krakow-zegocina-laskowa-limanowa/'
-    query = requests.get(page)
-    scrape = bs(query.text, 'lxml')
-
-    tab = scrape.find_all('tr')
-
-    return tab
-'''
-def Pociag(start, destination, date, hour):
-    if start  == 'Nowy Sącz' or destination == 'Nowy Sącz':
-        page = f'https://kolejemalopolskie.com.pl/pl/wyszukiwarka-polaczen#wyniki-wyszukiwania/1715709958533/Krak%C3%B3w/Nowy%20S%C4%85cz/c%7C55156/c%7C60585/14.05.2024/--%20%3A%20--/0'
-    elif start  == 'ZAK' or destination == 'ZAK':
-        page = 'https://www.szwagropol.pl/pl/linie-autobusowe/rozklad-jazdy/?rozklad=1&kierunek=2'
-
-    query = requests.get(page)
-    time.sleep(10)
-    scrape = bs(query.text, 'lxml')
-    data_1 = scrape.find_all('div')
-    return data_1
-'''
-
 
 class Fullscreen_Window:
 
@@ -94,34 +57,38 @@ class Fullscreen_Window:
             command=bfun(self, var1))
         toggle.pack(pady = 10)
 
-
-
+def Labels(label, bus):
+    if bus == "Szwagropol":
+        all_labels = {
+            '(1-5)': ('Pn','Wt','Śr','Czw','Pt'),
+            '(1-6)': ('Pn','Wt','Śr','Czw','Pt','Sb'),
+            '(1-7)': ('Pn','Wt','Śr','Czw','Pt','Sb','Nd'),
+            '(5-7)': ('Pt','Sb','Nd'),
+            '(6-7)': ('Sb','Nd'),
+            '(1-5,7)': ('Pn','Wt','Śr','Czw','Pt','Nd'),
+            '(5)': ('Pt'),
+            '(6)': ('Sb'),
+            '(7)': ('Nd')
+        }
+    elif bus == "Majer":
+                all_labels = {
+            '(1,7)': ('Pn','Wt','Śr','Czw','Pt','Sb','Nd'),
+            '(5,6,7)': ('Pt','Sb','Nd'),
+            '(6,7,1)': ('Sb','Nd','Pn'),
+            '(6,7)': ('Sb','Nd'),
+            '(5)': ('Pt'),
+            '(6)': ('Sb'),
+            '(7)': ('Nd'),
+            '(1)': ('Pn'),
+        }
+    return all_labels[label]
+    
 class bus:
 
     def __init__(self):
-        self.start = None
-        self.destination = None
-        self.top3_dep_time = None
-        self.top3_arr_time = None
-        self.day_label = None
+        None
 
     def szwagropol(self, start, destination, planned_dep_time, day):
-
-        def Labels(label, bus):
-            if bus == "Szwagropol":
-                all_labels = {
-                    '(1-5)': ('Pn','Wt','Śr','Czw','Pt'),
-                    '(1-6)': ('Pn','Wt','Śr','Czw','Pt','Sb'),
-                    '(1-7)': ('Pn','Wt','Śr','Czw','Pt','Sb','Nd'),
-                    '(5-7)': ('Pt','Sb','Nd'),
-                    '(6-7)': ('Sb','Nd'),
-                    '(1-5,7)': ('Pn','Wt','Śr','Czw','Pt','Nd'),
-                    '(5)': ('Pt'),
-                    '(6)': ('Sb'),
-                    '(7)': ('Nd')
-                }
-
-            return all_labels[label]
 
         if start  == 'Nowy Sącz' or destination == 'Nowy Sącz':
             page = 'https://www.szwagropol.pl/pl/linie-autobusowe/rozklad-jazdy/?rozklad=2&kierunek=6'
@@ -169,25 +136,69 @@ class bus:
 
         self.start = start
         self.destination = destination
-        self.top3_arr_time = tuple([i[1] for i in top3_results])
         self.top3_dep_time = tuple([i[0] for i in top3_results])
+        self.top3_arr_time = tuple([i[1] for i in top3_results])
         self.day_label = day
 
 
+    def majer(self, start, planned_dep_time, day):
+        page = 'https://www.majerbus.pl/pl/linia-regularna-zakopane-nowytarg-krakow'
+        query = requests.get(page)
+        scrape = bs(query.text, 'lxml')
 
+        data_0 = [i.text.split() for i in scrape.find_all('table')]
+        if start == 'Zakopane':
+            data_0 = [i for i in data_0[0] if i.isalpha() == False]
+        else:
+            data_0 = [i for i in data_0[1] if i.isalpha() == False]
 
+        data_1 = []
+        for i in data_0:
+            if len(i) > 7:
+                i = i.split('(')
+                data_1.append(i[0])
+                data_1.append('('+i[1])
+            elif len(i) == 4:
+                data_1.append('0'+i)
+            else:
+                data_1.append(i)
 
+        data_2 = []
+        data_3 = []
+        for i in data_1:
+            if len(data_2) < 3:
+                data_2.append(i)
+            elif (i[0] == '(' or data_2[-1][0] == '(') and len(data_2) < 6:
+                data_2.append(i)
+            else:
+                data_3.append(data_2)
+                data_2 = []
+                data_2.append(i)
 
+        data_3.append(data_2)
 
+        data_4 = []
+        for i in data_3:
+            if len(i) == 3:
+                i.append(Labels('(1,7)', "Majer"))
+                data_4.append([i[0],i[2],i[3]])
+            else:
+                i.append(Labels(i[1], "Majer"))
+                data_4.append([i[0],i[4],i[6]])
+            
+        top3_results = []
+        if start == 'Zakopane':
+            for i in sorted(data_4, key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[0], '%H:%M'))):
+                if day in i[-1] and len(top3_results) < 3:
+                    top3_results.append(i)
+        else:
+            for i in sorted(data_4, key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[0], '%H:%M'))):
+                if day in i[-1] and len(top3_results) < 3:
+                    top3_results.append(i)
+                    
+        self.start = start
+        self.destination = 'Kraków'
+        self.top3_dep_time = tuple([i[0] for i in top3_results])
+        self.top3_arr_time = tuple([i[1] for i in top3_results])
+        self.day_label = day
 
-
-    #def find_connection(self, time, day):
-
-
-
-
-
-
-
-#print(Pociag('Kraków', 'Nowy Sącz', '16-05-2024', '05:00'))
-#print(Maxbus())
