@@ -83,7 +83,7 @@ def Labels(label, bus):
         }
     return all_labels[label]
     
-class bus:
+class transport:
 
     def __init__(self):
         None
@@ -201,4 +201,78 @@ class bus:
         self.top3_dep_time = tuple([i[0] for i in top3_results])
         self.top3_arr_time = tuple([i[1] for i in top3_results])
         self.day_label = day
+
+
+    def train(self, start, destination, planned_dep_time, date):
+
+        def polish_sign(word):
+
+            signs = {
+                'ą': '%C4%85',
+                'ć': '%C4%87',
+                'ę': '%C4%99',
+                'ł': '%C5%82',
+                'ń': '%C5%84',
+                'ó': '%C3%83',
+                'ś': '%C5%9B',
+                'ź': '%C5%BA',
+                'ż': '%C5%BC',
+                'Ć': '%C4%86',
+                'Ł': '%C5%81',
+                'Ś': '%C5%9A',
+                'Ź': '%C5%B9',
+                'Ż': '%C5%BB'
+            }
+
+            for i in range(len(word)):
+                if word[i] in signs:
+                    word = word.replace(word[i], signs[word[i]])
+            return word
+        
+
+        page = f'https://bilkom.pl/stacje/tablica?nazwa={polish_sign(start)}&stacja=5100042&data={date.strip('.')}0000&time=00%3A00&przyjazd=false&_csrf='
+        query = requests.get(page)
+        scrape = bs(query.text, 'lxml')
+
+        links = [i.a['href'] for i in scrape.find_all('div', class_='timeTableRow') if destination.split()[0] in [i.text.split()[5], i.text.split()[6], i.text.split()[7]]]
+
+        scrape_links = []
+        for i in links:
+            page = f'https://bilkom.pl{i}'
+            query = requests.get(page)
+            scrape = bs(query.text, 'lxml')
+
+            train_name = scrape.find('div', class_='carrier-metadata').text
+
+            if len(start.split()) > 1 and len(destination.split()) > 1:
+                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if (i.text.split()[-1] == start.split()[1] and i.text.split()[-2] == start.split()[0]) or (i.text.split()[-1] == destination.split()[1] and i.text.split()[-2] == destination.split()[0])]
+            elif len(start.split()) > 1 and len(destination.split()) == 1:
+                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if (i.text.split()[-1] == start.split()[1] and i.text.split()[-2] == start.split()[0]) or i.text.split()[-1] == destination.split()[0]]
+            elif len(start.split()) == 1 and len(destination.split()) > 1:
+                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if (i.text.split()[-1] == start.split()[0]) or (i.text.split()[-1] == destination.split()[1] and i.text.split()[-2] == destination.split()[0])]
+            else:
+                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if i.text.split()[-1] == start.split()[0] or i.text.split()[-1] == destination.split()[0]]
+
+            if len(data_0[0]) > 10:
+                scrape_links.append([train_name.strip(), data_0[0][6], data_0[1][1]])
+            else:
+                scrape_links.append([train_name.strip(), data_0[0][1], data_0[1][1]])
+
+        top3_results = []
+        for i in sorted(scrape_links, key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[1], '%H:%M'))):
+            if len(top3_results) < 3:
+                top3_results.append(i)
+
+        self.start = start
+        self.destination = destination
+        self.train_name = tuple([i[0] for i in top3_results])
+        self.top3_dep_time = tuple([i[1] for i in top3_results])
+        self.top3_arr_time = tuple([i[2] for i in top3_results])
+        self.day_label = date
+        
+
+
+#print(train('27.05.2024', '3', ['Nowy', 'Sącz'], ['Kraków', 'Główny']))
+
+
 

@@ -18,7 +18,7 @@ import classes as cs
 
 print('Szwagropol przykład:')
 
-busik = cs.bus()
+busik = cs.transport()
 
 busik.szwagropol('Kraków', 'Zakopane', '03:00', 'Sb')
 
@@ -31,7 +31,7 @@ print(busik.day_label)
 
 print('\nMajer przykład:')
 
-busik2 = cs.bus()
+busik2 = cs.transport()
 
 busik2.majer('Kraków', '03:00', 'Sb')
 print(busik2.start)
@@ -39,3 +39,26 @@ print(busik2.destination)
 print(busik2.top3_dep_time)
 print(busik2.top3_arr_time)
 print(busik2.day_label)
+
+pociag = cs.transport()
+
+pociag.train('Nowy Sącz', 'Kraków Główny', '10:00', '27.09.2024')
+
+print('\nPociag przykład:')
+print(pociag.start)
+print(pociag.destination)
+print(pociag.train_name)
+print(pociag.top3_dep_time)
+print(pociag.top3_arr_time)
+print(pociag.day_label)
+
+pociag2 = cs.transport()
+pociag2.train('Nowy Sącz', 'Piwniczna', '10:00', '27.09.2024')
+
+print('\nPociag przykład:')
+print(pociag2.start)
+print(pociag2.destination)
+print(pociag2.train_name)
+print(pociag2.top3_dep_time)
+print(pociag2.top3_arr_time)
+print(pociag2.day_label)
