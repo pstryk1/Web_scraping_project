@@ -10,6 +10,29 @@ import time
 themes = ('darkly', 'flatly')
 
 
+def polish_sign(word):
+    signs = {
+        'ą': '%C4%85',
+        'ć': '%C4%87',
+        'ę': '%C4%99',
+        'ł': '%C5%82',
+        'ń': '%C5%84',
+        'ó': '%C3%83',
+        'ś': '%C5%9B',
+        'ź': '%C5%BA',
+        'ż': '%C5%BC',
+        'Ć': '%C4%86',
+        'Ł': '%C5%81',
+        'Ś': '%C5%9A',
+        'Ź': '%C5%B9',
+        'Ż': '%C5%BB'
+    }
+    for i in range(len(word)):
+        if word[i] in signs:
+            word = word.replace(word[i], signs[word[i]])
+    return word
+
+
 class Fullscreen_Window:
 
     def __init__(self):
@@ -141,7 +164,7 @@ class transport:
         self.day_label = day
 
 
-    def majer(self, start, planned_dep_time, day):
+    def majer(self, start, destination, planned_dep_time, day):
         page = 'https://www.majerbus.pl/pl/linia-regularna-zakopane-nowytarg-krakow'
         query = requests.get(page)
         scrape = bs(query.text, 'lxml')
@@ -197,7 +220,7 @@ class transport:
                     top3_results.append(i)
                     
         self.start = start
-        self.destination = 'Kraków'
+        self.destination = destination
         self.top3_dep_time = tuple([i[0] for i in top3_results])
         self.top3_arr_time = tuple([i[1] for i in top3_results])
         self.day_label = day
@@ -205,32 +228,16 @@ class transport:
 
     def train(self, start, destination, planned_dep_time, date):
 
-        def polish_sign(word):
 
-            signs = {
-                'ą': '%C4%85',
-                'ć': '%C4%87',
-                'ę': '%C4%99',
-                'ł': '%C5%82',
-                'ń': '%C5%84',
-                'ó': '%C3%83',
-                'ś': '%C5%9B',
-                'ź': '%C5%BA',
-                'ż': '%C5%BC',
-                'Ć': '%C4%86',
-                'Ł': '%C5%81',
-                'Ś': '%C5%9A',
-                'Ź': '%C5%B9',
-                'Ż': '%C5%BB'
-            }
-
-            for i in range(len(word)):
-                if word[i] in signs:
-                    word = word.replace(word[i], signs[word[i]])
-            return word
         
+        start_check = start.split()
 
-        page = f'https://bilkom.pl/stacje/tablica?nazwa={polish_sign(start)}&stacja=5100042&data={date.strip('.')}0000&time=00%3A00&przyjazd=false&_csrf='
+        if len(start_check) > 1:
+            start_link = ''
+            for i in start_check:
+                start_link = start_link + '+' + i
+
+        page = f'https://bilkom.pl/stacje/tablica?nazwa={start_link}&stacja=5100042&data={date.strip('.')}0000&time=00%3A00&przyjazd=false&_csrf='
         query = requests.get(page)
         scrape = bs(query.text, 'lxml')
 
@@ -254,6 +261,7 @@ class transport:
                 data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if i.text.split()[-1] == start.split()[0] or i.text.split()[-1] == destination.split()[0]]
 
             if len(data_0[0]) > 10:
+                print(data_0)
                 scrape_links.append([train_name.strip(), data_0[0][6], data_0[1][1]])
             else:
                 scrape_links.append([train_name.strip(), data_0[0][1], data_0[1][1]])
@@ -275,4 +283,8 @@ class transport:
 #print(train('27.05.2024', '3', ['Nowy', 'Sącz'], ['Kraków', 'Główny']))
 
 
+def station_code(station):
+    with open('train_stations.ini', 'r', encoding= 'utf8') as file:
+        file = [[i.strip().split()[0]+i.strip().split()[1], i.strip().split()[2]] if len(i.strip().split()) > 2 else i.strip().split() for i in file.readlines()]
+        print(file)
 
