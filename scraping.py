@@ -42,7 +42,7 @@ print(busik2.day_label)
 
 pociag = cs.transport()
 
-pociag.train('Kraków Główny', 'Tarnów', '20:00', '29.05.2024')
+pociag.train1('Kraków Główny', 'Rzeszów Główny', '21:00', '29.05.2024')
 
 print('\nPociag przykład:')
 print(pociag.start)
@@ -51,9 +51,12 @@ print(pociag.train_name)
 print(pociag.top3_dep_time)
 print(pociag.top3_arr_time)
 print(pociag.day_label)
+print(pociag.train_change_city)
+
 
 pociag2 = cs.transport()
-pociag2.train('Nowy Sącz', 'Piwniczna', '21:00', '28.05.2024')
+
+pociag2.train1('Ustrzyki Dolne', 'Biała Podlaska', '21:00', '30.05.2024')
 
 print('\nPociag przykład:')
 print(pociag2.start)
@@ -61,4 +64,5 @@ print(pociag2.destination)
 print(pociag2.train_name)
 print(pociag2.top3_dep_time)
 print(pociag2.top3_arr_time)
+print(pociag2.train_change_city)
 print(pociag2.day_label)
