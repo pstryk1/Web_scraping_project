@@ -92,7 +92,9 @@ class FullscreenWindow:
         
 
         SearchSettings(self) #tworzenie obiektu do wyszukiwania
-
+        self.ramka= tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=100)
+        self.ramka.config()
+        self.ramka.grid(padx = 10, pady = 10, row = 2, column=0, sticky='n')
         #self.frame['borderwidth'] = 1
         self.label1 = ttk.Label(text='Wyniki wyszukiwania', font=("Monsterrat", 15))
         self.label1.grid(padx = 10, pady = 10, row = 2, column=0, sticky='n')
@@ -150,10 +152,11 @@ class SearchSettings(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
 
-        self.frame = tk.Frame(parent.ttk,   bd=2, relief="solid", padx=10, pady=10, width=100)
+        self.frame = tk.Frame(parent.ttk, bd=2, relief="solid", padx=10, pady=10, width=100)
         self.frame.pack_propagate(False)
         self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='n')
         self.frame['borderwidth'] = 1
+        #self.frame['color'] = '#ff5733'
         #for i in range(6):
             #self.frame.grid_columnconfigure(i, weight=1)
             
@@ -299,7 +302,7 @@ class SearchResult(ttk.Frame):
         #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
         resultData = self.navigate()
 
-        self.frame1 = tk.Frame(  bd=2, relief="solid", padx=10, pady=10)
+        self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10)
         #self.frame.pack(padx=20, pady=20)
         self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
         self.frame1['borderwidth'] = 1
