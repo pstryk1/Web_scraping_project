@@ -228,16 +228,27 @@ class transport:
 
     def train(self, start, destination, planned_dep_time, date):
 
-
+        def station_code(station):
+            with open('Hafas_Codes.csv', 'r', encoding= 'utf8') as file:
+                data = {
+                    i.split(';')[0]:i.split(';')[1].strip() for i in file.readlines()
+                }
+                return data[station]
         
         start_check = start.split()
 
         if len(start_check) > 1:
             start_link = ''
             for i in start_check:
-                start_link = start_link + '+' + i
-
-        page = f'https://bilkom.pl/stacje/tablica?nazwa={start_link}&stacja=5100042&data={date.strip('.')}0000&time=00%3A00&przyjazd=false&_csrf='
+                if start_link != '':
+                    start_link = start_link + '+' + i
+                else:
+                    start_link = i
+        
+        if planned_dep_time[:2] != '00':
+            page = f'https://bilkom.pl/stacje/tablica?nazwa={start_link}&stacja={station_code(start_link)}&data={date.replace('.','')}{str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&time={planned_dep_time[:2]}%3A{planned_dep_time[-2:]}&przyjazd=false&_csrf='
+        else:
+            page = f'https://bilkom.pl/stacje/tablica?nazwa={start_link}&stacja={station_code(start_link)}&data={date.replace('.','')}{planned_dep_time.replace(':','')}&time={planned_dep_time[:2]}%3A{planned_dep_time[-2:]}&przyjazd=false&_csrf='
         query = requests.get(page)
         scrape = bs(query.text, 'lxml')
 
@@ -261,7 +272,6 @@ class transport:
                 data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if i.text.split()[-1] == start.split()[0] or i.text.split()[-1] == destination.split()[0]]
 
             if len(data_0[0]) > 10:
-                print(data_0)
                 scrape_links.append([train_name.strip(), data_0[0][6], data_0[1][1]])
             else:
                 scrape_links.append([train_name.strip(), data_0[0][1], data_0[1][1]])
@@ -281,10 +291,4 @@ class transport:
 
 
 #print(train('27.05.2024', '3', ['Nowy', 'Sącz'], ['Kraków', 'Główny']))
-
-
-def station_code(station):
-    with open('train_stations.ini', 'r', encoding= 'utf8') as file:
-        file = [[i.strip().split()[0]+i.strip().split()[1], i.strip().split()[2]] if len(i.strip().split()) > 2 else i.strip().split() for i in file.readlines()]
-        print(file)
 

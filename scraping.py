@@ -42,7 +42,7 @@ print(busik2.day_label)
 
 pociag = cs.transport()
 
-pociag.train('Nowy Sącz', 'Kraków Główny', '17:00', '28.05.2024')
+pociag.train('Kraków Główny', 'Tarnów', '20:00', '29.05.2024')
 
 print('\nPociag przykład:')
 print(pociag.start)

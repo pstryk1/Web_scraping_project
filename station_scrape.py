@@ -10,7 +10,6 @@ for i in list_range:
     scrape = bs(query.text, 'lxml')
 
     links = [i.a['href'] for i in scrape.find_all('span', style='white-space: nowrap')]
-    #print(links)
 
     for j in links:
         page = f'https://www.bazakolejowa.pl/{j}'
@@ -36,11 +35,9 @@ for i in list_range:
                 staction_name = name
 
             hafas = scrape.find('td', id='wyp11Text')
-            #print(f'\n\n\n{staction_name}')
-            #print(hafas)
+            
             if hafas != None:
                 hafas_list = hafas.text.split()
-                #print(f'{staction_name}   {hafas}\n')
                 for m in hafas_list:
                     if 'HAFAS' in m:
                         hafas_code = m[6:]
