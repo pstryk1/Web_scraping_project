@@ -88,6 +88,15 @@ def search_transport(start, destination, hour, day):
 
 
 
-print(search_transport('Nowy Sącz', 'Kraków Główny', '13:00', '31.05.2024'))
-print(search_transport('Zakopane', 'Kraków Główny', '10:00', '31.05.2024'))
-print(search_transport('Niedźwiedź', 'Olsztyn Główny', '11:00', '31.05.2024'))
+#print(search_transport('Nowy Sącz', 'Kraków Główny', '13:00', '31.05.2024'))
+#print(search_transport('Zakopane', 'Kraków Główny', '10:00', '31.05.2024'))
+#print(search_transport('Kraków Główny', 'Nowy Targ', '11:00', '31.05.2024'))
+
+ab = cs.transport()
+
+ab.train('Kraków Główny', 'Niedźwiedź', '10:00', '31.05.2024')
+
+print(ab.start)
+print(ab.destination)
+print(ab.top6_dep_time)
+print(ab.top6_arr_time)

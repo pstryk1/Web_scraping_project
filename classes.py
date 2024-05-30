@@ -116,8 +116,8 @@ class transport:
         self.destination = None
         self.day_label = None
         self.train_name = []
-        self.top3_dep_time = []
-        self.top3_arr_time = []
+        self.top5_dep_time = []
+        self.top5_arr_time = []
         self.train_change_city = []
 
 
