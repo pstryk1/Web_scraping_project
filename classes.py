@@ -80,36 +80,46 @@ class Fullscreen_Window:
             command=bfun(self, var1))
         toggle.pack(pady = 10)
 
+
 def Labels(label, bus):
     if bus == "Szwagropol":
         all_labels = {
-            '(1-5)': ('Pn','Wt','Śr','Czw','Pt'),
-            '(1-6)': ('Pn','Wt','Śr','Czw','Pt','Sb'),
-            '(1-7)': ('Pn','Wt','Śr','Czw','Pt','Sb','Nd'),
-            '(5-7)': ('Pt','Sb','Nd'),
-            '(6-7)': ('Sb','Nd'),
-            '(1-5,7)': ('Pn','Wt','Śr','Czw','Pt','Nd'),
-            '(5)': ('Pt'),
-            '(6)': ('Sb'),
-            '(7)': ('Nd')
+            '(1-5)': ('poniedziałek','wtorek','środa','czwartek','piątek'),
+            '(1-6)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota'),
+            '(1-7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota', 'niedziela'),
+            '(5-7)': ('piątek', 'sobota', 'niedziela'),
+            '(6-7)': ('sobota','niedziela'),
+            '(1-5,7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'niedziela'),
+            '(5)': ('piątek'),
+            '(6)': ('sobota'),
+            '(7)': ('niedziela')
         }
     elif bus == "Majer":
                 all_labels = {
-            '(1,7)': ('Pn','Wt','Śr','Czw','Pt','Sb','Nd'),
-            '(5,6,7)': ('Pt','Sb','Nd'),
-            '(6,7,1)': ('Sb','Nd','Pn'),
-            '(6,7)': ('Sb','Nd'),
-            '(5)': ('Pt'),
-            '(6)': ('Sb'),
-            '(7)': ('Nd'),
-            '(1)': ('Pn'),
+            '(1,7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota', 'niedziela'),
+            '(5,6,7)': ('piątek', 'sobota', 'niedziela'),
+            '(6,7,1)': ('sobota','niedziela','poniedziałek'),
+            '(6,7)': ('sobota', 'niedziela'),
+            '(5)': ('piątek'),
+            '(6)': ('sobota'),
+            '(7)': ('niedziela'),
+            '(1)': ('poniedziałek'),
         }
     return all_labels[label]
+
     
 class transport:
 
     def __init__(self):
-        None
+        self.is_connection = None
+        self.start = None
+        self.destination = None
+        self.day_label = None
+        self.train_name = []
+        self.top3_dep_time = []
+        self.top3_arr_time = []
+        self.train_change_city = []
+
 
     def szwagropol(self, start, destination, planned_dep_time, day):
 
@@ -147,20 +157,20 @@ class transport:
             data_3.append(tuple(data_4))
             data_2.append(tuple(data_3))
 
-        top3_results = []
+        top5_results = []
         if start == 'Nowy Sącz' or start == 'Zakopane':
             for i in sorted(data_2[1], key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[0], '%H:%M'))):
-                if day in Labels(i[2], 'Szwagropol') and len(top3_results) < 3:
-                    top3_results.append(i)
+                if day in Labels(i[2], 'Szwagropol') and len(top5_results) < 5:
+                    top5_results.append(i)
         else:
             for i in sorted(data_2[0], key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[0], '%H:%M'))):
-                if day in Labels(i[2], 'Szwagropol') and len(top3_results) < 3:
-                    top3_results.append(i)            
+                if day in Labels(i[2], 'Szwagropol') and len(top5_results) < 5:
+                    top5_results.append(i)            
 
         self.start = start
         self.destination = destination
-        self.top3_dep_time = tuple([i[0] for i in top3_results])
-        self.top3_arr_time = tuple([i[1] for i in top3_results])
+        self.top5_dep_time = tuple([i[0] for i in top5_results])
+        self.top5_arr_time = tuple([i[1] for i in top5_results])
         self.day_label = day
 
 
@@ -209,111 +219,24 @@ class transport:
                 i.append(Labels(i[1], "Majer"))
                 data_4.append([i[0],i[4],i[6]])
             
-        top3_results = []
+        top5_results = []
         if start == 'Zakopane':
             for i in sorted(data_4, key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[0], '%H:%M'))):
-                if day in i[-1] and len(top3_results) < 3:
-                    top3_results.append(i)
+                if day in i[-1] and len(top5_results) < 5:
+                    top5_results.append(i)
         else:
             for i in sorted(data_4, key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[0], '%H:%M'))):
-                if day in i[-1] and len(top3_results) < 3:
-                    top3_results.append(i)
+                if day in i[-1] and len(top5_results) < 5:
+                    top5_results.append(i)
                     
         self.start = start
         self.destination = destination
-        self.top3_dep_time = tuple([i[0] for i in top3_results])
-        self.top3_arr_time = tuple([i[1] for i in top3_results])
+        self.top5_dep_time = tuple([i[0] for i in top5_results])
+        self.top5_arr_time = tuple([i[1] for i in top5_results])
         self.day_label = day
 
-
+        
     def train(self, start, destination, planned_dep_time, date):
-
-        def station_code(station):
-            with open('Hafas_Codes.csv', 'r', encoding= 'utf8') as file:
-                data = {
-                    i.split(';')[0]:i.split(';')[1].strip() for i in file.readlines()
-                }
-                return data[station]
-            
-        print(date[3:5])
-        start_check = start.split()
-
-        if len(start_check) > 1:
-            start_link = ''
-            for i in start_check:
-                if start_link != '':
-                    start_link = start_link + '+' + i
-                else:
-                    start_link = i
-        
-        if planned_dep_time[:2] != '00':
-            page = f'https://bilkom.pl/stacje/tablica?nazwa={start_link}&stacja={station_code(start_link)}&data={date.replace('.','')}{str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&przyjazd=false&_csrf='
-        else:
-            page = f'https://bilkom.pl/stacje/tablica?nazwa={start_link}&stacja={station_code(start_link)}&data={date.replace('.','')}{planned_dep_time.replace(':','')}&time={planned_dep_time[:2]}%3A{planned_dep_time[-2:]}&przyjazd=false&_csrf='
-        query = requests.get(page)
-        scrape = bs(query.text, 'lxml')
-        print(page)
-
-
-        links = [i.a['href'] for i in scrape.find_all('div', class_='timeTableRow') if destination.split()[0] in [i.text.split()[5], i.text.split()[6], i.text.split()[7]]]
-        #links = [i.a['href'] for i in scrape.find_all('div', class_='timeTableRow')]
-
-        scrape_links = []
-        for i in links:
-            page = f'https://bilkom.pl{i}'
-            query = requests.get(page)
-            scrape = bs(query.text, 'lxml')
-
-            train_name = scrape.find('div', class_='carrier-metadata').text
-
-            if len(start.split()) > 1 and len(destination.split()) > 1:
-                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if (i.text.split()[-1] == start.split()[1] and i.text.split()[-2] == start.split()[0]) or (i.text.split()[-1] == destination.split()[1] and i.text.split()[-2] == destination.split()[0])]
-            elif len(start.split()) > 1 and len(destination.split()) == 1:
-                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if (i.text.split()[-1] == start.split()[1] and i.text.split()[-2] == start.split()[0]) or i.text.split()[-1] == destination.split()[0]]
-            elif len(start.split()) == 1 and len(destination.split()) > 1:
-                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if (i.text.split()[-1] == start.split()[0]) or (i.text.split()[-1] == destination.split()[1] and i.text.split()[-2] == destination.split()[0])]
-            else:
-                data_0 = [i.text.split() for i in scrape.find_all('div', class_='trip') if i.text.split()[-1] == start.split()[0] or i.text.split()[-1] == destination.split()[0]]
-
-            print(data_0)
-
-            if len(data_0[0]) > 10:
-                scrape_links.append([train_name.strip(), data_0[0][6], data_0[1][1]])
-            else:
-                scrape_links.append([train_name.strip(), data_0[0][1], data_0[1][1]])
-
-        top3_results = []
-        for i in sorted(scrape_links, key= lambda o: abs(datetime.strptime(planned_dep_time, '%H:%M') - datetime.strptime(o[1], '%H:%M'))):
-            if len(top3_results) < 3:
-                top3_results.append(i)
-
-        self.start = start
-        self.destination = destination
-        self.train_name = tuple([i[0] for i in top3_results])
-        self.top3_dep_time = tuple([i[1] for i in top3_results])
-        self.top3_arr_time = tuple([i[2] for i in top3_results])
-        self.day_label = date
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    def train1(self, start, destination, planned_dep_time, date):
 
         def station_code(station):
             with open('Hafas_Codes.csv', 'r', encoding= 'utf8') as file:
@@ -331,16 +254,18 @@ class transport:
                     else:
                         station_link = i
                 return station_link
-            return station
+            return station[0]
         
         start_link = station_name_code(start.split())
         destination_link = station_name_code(destination.split())
 
         
-        if planned_dep_time[:2] != '00':
-            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D5100229%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
+        if planned_dep_time[:2] != '00' and int(planned_dep_time[:2]) > 10:
+            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
+        elif int(planned_dep_time[:2]) <= 10:
+            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{'0'+str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='  
         else:
-            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D5100229%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{planned_dep_time.replace(':','')}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={planned_dep_time.replace(':','')}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
+            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{planned_dep_time.replace(':','')}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={planned_dep_time.replace(':','')}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
         print(page)
         query = requests.get(page)
         scrape = bs(query.text, 'lxml')
@@ -367,36 +292,43 @@ class transport:
                                 word = k
                         elif k != '|':
                             all_rows_new.append(k)
-                    all_rows_new.append(word)
+                    if word != '':
+                        all_rows_new.append(word)
                 else:
                     all_rows_new = all_rows[i][0]+' '+all_rows[i][1]
                 result_rows.append(all_rows_new)
             results.append(result_rows)
     
-        #print(results)
-        self.start = start
-        self.destination = results[-1][-1][-1]
-        self.day_label = date
-        self.train_name = []
-        self.top3_dep_time = []
-        self.top3_arr_time = []
-        self.train_change_city = []
+        if len(results) == 0:
+            self.is_connection = False
+            self.start = start
+            self.destination = destination
+            self.day_label = date
+        else: 
+            self.is_connection = True
+            self.start = start
+            self.destination = destination
+            self.day_label = date
+            self.train_name = []
+            self.top6_dep_time = []
+            self.top6_arr_time = []
+            self.train_change_city = []
 
-        for i in results:
+            for i in results:
 
-            if len(self.top3_dep_time) == 3:
-                break
+                if len(self.top6_dep_time) == 6:
+                    break
 
-            if len(i) == 3:
-                self.train_name.append(i[1])
-                self.top3_dep_time.append(i[0][0])
-                self.top3_arr_time.append(i[2][0])
-            else:
-                self.train_name.append([i[k] for k in range(len(i)) if k % 2 == 1])
-                self.top3_dep_time.append(i[0][0])
-                self.top3_arr_time.append(i[-1][0])
-                
-                self.train_change_city.append([[i[k][-2], i[k][-1]] for k in range(len(i)) if k % 2 == 0 and i[k] is not i[0] and i[k] is not i[-1]])
+                if len(i) == 3:
+                    self.train_name.append(i[1])
+                    self.top6_dep_time.append(i[0][0])
+                    self.top6_arr_time.append(i[2][0])
+                else:
+                    self.train_name.append([i[k] for k in range(len(i)) if k % 2 == 1])
+                    self.top6_dep_time.append(i[0][0])
+                    self.top6_arr_time.append(i[-1][0])
+                    
+                    self.train_change_city.append([[i[k][-2], i[k][-1]] for k in range(len(i)) if k % 2 == 0 and i[k] is not i[0] and i[k] is not i[-1]])
 
 
 

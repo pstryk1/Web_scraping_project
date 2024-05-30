@@ -4,65 +4,90 @@ from bs4 import BeautifulSoup as bs
 from lxml import html
 import requests
 import sys
+from datetime import datetime
 import classes as cs
 
 
-#if __name__ == '__main__':
+def search_transport(start, destination, hour, day):
 
-    #mainScreen = cs.Fullscreen_Window()
-    #mainScreen.edit_text(5, 100)
-    #mainScreen.edit_text(5, 100)
-    #mainScreen.toggle_button("przycisk")
-    
-    #mainScreen.ttk.mainloop()
+    def day_name(day):
+        day = datetime.strptime(day, '%d.%m.%Y')
+        day_name = datetime.strftime(day, '%A')
+        return day_name
 
-print('Szwagropol przykład:')
+    if (start == 'Nowy Sącz' and destination == 'Kraków Główny') or (destination == 'Nowy Sącz' and start == 'Kraków Główny'):
 
-busik = cs.transport()
+        szwagropol = cs.transport()
+        szwagropol.szwagropol(start, destination, hour, day_name(day))
 
-busik.szwagropol('Kraków', 'Zakopane', '03:00', 'Sb')
+        train = cs.transport()
+        train.train(start, destination, hour, day)
 
-print(busik.start)
-print(busik.destination)
-print(busik.top3_dep_time)
-print(busik.top3_arr_time)
-print(busik.day_label)
+        szwagropol_data = [[szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i], 'Szwagropol'] for i in range(5)]
+        
+        train_data = []
+        counter = 0
+        for i in range(6):
+            if type(train.train_name[i]) != list:
+                train_data.append([train.top6_dep_time[i], train.top6_arr_time[i], train.train_name[i]])
+            else:
+                train_data.append([train.top6_dep_time[i], train.top6_arr_time[i], train.train_name[i], train.train_change_city[counter]])
+                counter += 1
+
+        transport = []
+        transport.extend(szwagropol_data)
+        transport.extend(train_data)
+
+        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[0], '%H:%M')))[i] for i in range(6)], key= lambda o: o[0])
+
+    elif (start == 'Zakopane' and destination == 'Kraków Główny') or (destination == 'Zakopane' and start == 'Kraków Główny'):
+
+        szwagropol = cs.transport()
+        szwagropol.szwagropol(start, destination, hour, day_name(day))
+
+        majer = cs.transport()
+        majer.majer(start, destination, hour, day_name(day))
+
+        train = cs.transport()
+        train.train(start, destination, hour, day)
+
+        szwagropol_data = [[szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i], 'Szwagropol'] for i in range(5)]
+        majer_data = [[majer.top5_dep_time[i], majer.top5_arr_time[i], 'Majer'] for i in range(5)]
+        
+        train_data = []
+        counter = 0
+        for i in range(6):
+            if type(train.train_name[i]) != list:
+                train_data.append([train.top6_dep_time[i], train.top6_arr_time[i], train.train_name[i]])
+            else:
+                train_data.append([train.top6_dep_time[i], train.top6_arr_time[i], train.train_name[i], train.train_change_city[counter]])
+                counter += 1
+
+        transport = []
+        transport.extend(szwagropol_data)
+        transport.extend(majer_data)
+        transport.extend(train_data)
+
+        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[0], '%H:%M')))[i] for i in range(6)], key= lambda o: o[0])
+
+    else:
+
+        train = cs.transport()
+        train.train(start, destination, hour, day)        
+
+        transport = []
+        counter = 0
+        for i in range(6):
+            if type(train.train_name[i]) != list:
+                transport.append([train.top6_dep_time[i], train.top6_arr_time[i], train.train_name[i]])
+            else:
+                transport.append([train.top6_dep_time[i], train.top6_arr_time[i], train.train_name[i], train.train_change_city[counter]])
+                counter += 1
+
+    return transport
 
 
-print('\nMajer przykład:')
 
-busik2 = cs.transport()
-
-busik2.majer('Kraków', 'Zakopane', '03:00', 'Sb')
-print(busik2.start)
-print(busik2.destination)
-print(busik2.top3_dep_time)
-print(busik2.top3_arr_time)
-print(busik2.day_label)
-
-pociag = cs.transport()
-
-pociag.train1('Kraków Główny', 'Rzeszów Główny', '21:00', '29.05.2024')
-
-print('\nPociag przykład:')
-print(pociag.start)
-print(pociag.destination)
-print(pociag.train_name)
-print(pociag.top3_dep_time)
-print(pociag.top3_arr_time)
-print(pociag.day_label)
-print(pociag.train_change_city)
-
-
-pociag2 = cs.transport()
-
-pociag2.train1('Ustrzyki Dolne', 'Biała Podlaska', '21:00', '30.05.2024')
-
-print('\nPociag przykład:')
-print(pociag2.start)
-print(pociag2.destination)
-print(pociag2.train_name)
-print(pociag2.top3_dep_time)
-print(pociag2.top3_arr_time)
-print(pociag2.train_change_city)
-print(pociag2.day_label)
+print(search_transport('Nowy Sącz', 'Kraków Główny', '13:00', '31.05.2024'))
+print(search_transport('Zakopane', 'Kraków Główny', '10:00', '31.05.2024'))
+print(search_transport('Niedźwiedź', 'Olsztyn Główny', '11:00', '31.05.2024'))
