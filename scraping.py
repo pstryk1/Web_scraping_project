@@ -11,5 +11,11 @@ import variables as var
 
 
 if __name__ == '__main__':
-    mainScreen = cs.FullscreenWindow()
-    mainScreen.ttk.mainloop()
+    #mainScreen = cs.FullscreenWindow()
+    
+    #mainScreen.ttk.mainloop()
+    ble =  cs.busiordosalonik('Słomniki','Słomniki','19:00','28')
+    timetable = ble.AD()
+    print(timetable)
+    
+    
