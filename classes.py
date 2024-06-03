@@ -134,10 +134,14 @@ class busiordosalonik:
         
         for i in self.timetable:
             time_str = i[1]
-            formatted_time = date.strftime(time_str,'%H:%M')
-            x = formatted_time + date.strfitme('00:36')
+            # Parse the time string to a datetime object
+            time_obj = date.strftime(time_str)
+            # Format the datetime object back to a time string
+            formatted_time = time_obj.strftime('%H:%M')
+            # Concatenate the formatted time with '00:36'
+            x = formatted_time + '00:36'
             i.append(x)
-        
+
         return self.timetable
 
         
