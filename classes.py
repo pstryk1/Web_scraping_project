@@ -7,7 +7,6 @@ import sys
 from datetime import datetime, timedelta
 import variables as var
 import webbrowser as web
-from math import fabs
 
 themes = ('darkly', 'flatly')
 
@@ -80,6 +79,7 @@ class busiordosalonik:
         self.arrive = None
         self.leave = leave
         self.date = dates
+        self.top5_departures = []
     
     def AD(self):
         
@@ -144,12 +144,14 @@ class busiordosalonik:
 
 
         filtered_timetable = []
-        for i in sorted(self.timetable, key = lambda x: fabs(leave_time-datetime.strptime(x[1],'%H:%M'))):
+        for i in sorted(self.timetable, key = lambda x: abs( leave_time - datetime.strptime(x[1],'%H:%M'))):
             if day_of_week in i[0] and len(filtered_timetable) < 5:
                 filtered_timetable.append(i)
         
-        
-        return filtered_timetable
+        return
+        self.start
+        self.destination
+        self.top5_departures = filtered_timetable
 
         
 class FullscreenWindow:
