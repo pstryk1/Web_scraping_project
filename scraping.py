@@ -14,7 +14,7 @@ if __name__ == '__main__':
     #mainScreen = cs.FullscreenWindow()
     
     #mainScreen.ttk.mainloop()
-    ble =  cs.busiordosalonik('Słomniki','Słomniki','8:00','2023-06-02')
+    ble =  cs.busiordosalonik('Słomniki','Słomniki','8:00','2023-06-07')
     timetable = ble.AD()
     print(timetable)
     

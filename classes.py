@@ -82,7 +82,7 @@ class busiordosalonik:
     
     def AD(self):
         
-        self.dzien_tyg = ["poniedziałek","wtorek","środa","czwartek","piątek"]
+        self.dzien_tyg = ["poniedzialek","wtorek","sroda","czwartek","piatek"]
         
         self.strona = "https://www.busy-krk.pl/slomniki-krakow/"
             
@@ -141,24 +141,13 @@ class busiordosalonik:
         leave_date = datetime.strptime(self.date, '%Y-%m-%d')
         day_of_week = leave_date.strftime('%A').lower()
 
-        days_translation = {
-            'Monday': 'poniedziałek',
-            'Tuesday': 'wtorek',
-            'Wednesday': 'środa',
-            'Thursday': 'czwartek',
-            'Friday': 'piątek',
-            'Saturday': 'sobota',
-            'Sunday': 'niedziela'
-        }
-
-        day_of_week_pl = days_translation.get(day_of_week)
 
         filtered_timetable = []
-        for entry in self.timetable:
-            if entry[0] == day_of_week_pl:
-                departure_time = datetime.strptime(entry[1], '%H:%M')
+        for i in self.timetable:
+            if i[0] == day_of_week:
+                departure_time = datetime.strptime(i[1], '%H:%M')
                 if departure_time >= leave_time:
-                    filtered_timetable.append(entry)
+                    filtered_timetable.append(i)
         
         filtered_timetable.sort(key=lambda x: datetime.strptime(x[1], '%H:%M'))
         
