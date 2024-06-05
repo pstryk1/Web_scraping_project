@@ -6,6 +6,7 @@ import requests
 import sys
 import classes as cs
 import variables as var
+from datetime import datetime
 
 
 
@@ -14,8 +15,8 @@ if __name__ == '__main__':
     #mainScreen = cs.FullscreenWindow()
     
     #mainScreen.ttk.mainloop()
-    ble =  cs.busiordosalonik('Słomniki','Słomniki','8:00','2023-06-07')
-    timetable = ble.AD()
+    ble =  cs.busiordosalonik()
+    timetable = sorted(ble.AD('Słomniki','Słomniki','15:00','2024-06-07'), key = lambda x: datetime.strptime(x[1],'%H:%M'))
     print(timetable)
     
     
