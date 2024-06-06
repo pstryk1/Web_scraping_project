@@ -16,7 +16,7 @@ if __name__ == '__main__':
     
     #mainScreen.ttk.mainloop()
     ble =  cs.busiordosalonik()
-    timetable = sorted(ble.AD('Słomniki','Słomniki','15:00','2024-06-07'), key = lambda x: datetime.strptime(x[1],'%H:%M'))
+    timetable = sorted(ble.AD('Słomniki','Kraków','10:00','2024-06-07'), key = lambda x: datetime.strptime(x[1],'%H:%M'))
     print(timetable)
     
     
