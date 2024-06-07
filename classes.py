@@ -84,26 +84,26 @@ class Fullscreen_Window:
 def Labels(label, bus):
     if bus == "Szwagropol":
         all_labels = {
-            '(1-5)': ('poniedziałek','wtorek','środa','czwartek','piątek'),
-            '(1-6)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota'),
-            '(1-7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota', 'niedziela'),
-            '(5-7)': ('piątek', 'sobota', 'niedziela'),
+            '(1-5)': ('poniedzialek','wtorek','sroda','czwartek','piatek'),
+            '(1-6)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'sobota'),
+            '(1-7)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'sobota', 'niedziela'),
+            '(5-7)': ('piatek', 'sobota', 'niedziela'),
             '(6-7)': ('sobota','niedziela'),
-            '(1-5,7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'niedziela'),
-            '(5)': ('piątek'),
+            '(1-5,7)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'niedziela'),
+            '(5)': ('piatek'),
             '(6)': ('sobota'),
             '(7)': ('niedziela')
         }
     elif bus == "Majer":
                 all_labels = {
-            '(1,7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota', 'niedziela'),
-            '(5,6,7)': ('piątek', 'sobota', 'niedziela'),
-            '(6,7,1)': ('sobota','niedziela','poniedziałek'),
+            '(1,7)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'sobota', 'niedziela'),
+            '(5,6,7)': ('piatek', 'sobota', 'niedziela'),
+            '(6,7,1)': ('sobota','niedziela','poniedzialek'),
             '(6,7)': ('sobota', 'niedziela'),
-            '(5)': ('piątek'),
+            '(5)': ('piatek'),
             '(6)': ('sobota'),
             '(7)': ('niedziela'),
-            '(1)': ('poniedziałek'),
+            '(1)': ('poniedzialek'),
         }
     return all_labels[label]
 
@@ -124,6 +124,7 @@ class transport:
 
 
     def szwagropol(self, start, destination, planned_dep_time, day):
+        print(day)
 
         if start  == 'Nowy Sącz' or destination == 'Nowy Sącz':
             page = 'https://www.szwagropol.pl/pl/linie-autobusowe/rozklad-jazdy/?rozklad=2&kierunek=6'
@@ -237,6 +238,7 @@ class transport:
         self.top5_arr_time = tuple([i[1] for i in top5_results])
         self.day_label = day
 
+    '''
     def AD(self,start,destination,leave, dates):
         
         self.start = start
@@ -289,7 +291,9 @@ class transport:
                 if j[0] == "pon. - pt.":
                     self.timetable.append([i,j[1]])
         
-        return self.top5_departures
+        #return self.top5_departures
+    
+    '''
         
     def train(self, start, destination, planned_dep_time, date):
 
@@ -314,13 +318,16 @@ class transport:
         start_link = station_name_code(start.split())
         destination_link = station_name_code(destination.split())
 
+        date_link = date.replace('.','')
+        hour_link = planned_dep_time.replace(':','')
+        zero_link = '0'
         
         if planned_dep_time[:2] != '00' and int(planned_dep_time[:2]) > 10:
-            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
+            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
         elif int(planned_dep_time[:2]) <= 10:
-            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{'0'+str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='  
+            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{zero_link+str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='  
         else:
-            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date.replace('.','')}{planned_dep_time.replace(':','')}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={planned_dep_time.replace(':','')}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
+            page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{hour_link}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={hour_link}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
         print(page)
         query = requests.get(page)
         scrape = bs(query.text, 'lxml')
