@@ -7,6 +7,7 @@ import sys
 from datetime import date
 import variables as var
 import webbrowser as web
+import csv
 
 themes = ('quocalcus', 'flatly')
 
@@ -73,6 +74,8 @@ def Szwagropol(location):
 
 
 
+
+
 class FullscreenWindow:
 
     def __init__(self):
@@ -127,14 +130,14 @@ class FullscreenWindow:
 
     def edit_text(self,  height, width, r, c, px, py):
         edit_text = tk.Text(height=height, width=width, font=("Arial", 12), bd=2, relief="solid", padx=10, pady=10)
-        edit_text.grid(r, c) #expand=False, fill="both"
+        edit_text.grid(r, c)
         return edit_text.get("1.0", "end-1c")  
 
     def toggle_button(self):
         def bfun():
             self.ttk.style.theme_use(themes[var1.get()])
             self.toggle.configure(text=themes[var1.get()].capitalize())
-            #self.frame.style.theme_use(themes[var1.get()])
+
 
         var1 = ttk.IntVar()
         self.toggle = ttk.Checkbutton(
@@ -145,8 +148,8 @@ class FullscreenWindow:
             offvalue=0,
             command=bfun)
         self.toggle.grid(padx = 10, pady = 10, row = 0, column=0, sticky='e')
-        #self.toggle.pack(padx = 10, pady = 10, side=("right", 'top'))
-        
+
+#---------------------------------------------------------------------------------------------------------------------------#        
 
 class SearchSettings(ttk.Frame):
     def __init__(self, parent):
@@ -156,41 +159,122 @@ class SearchSettings(ttk.Frame):
         self.frame.pack_propagate(False)
         self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='n')
         self.frame['borderwidth'] = 1
-        #self.frame['color'] = '#ff5733'
-        #for i in range(6):
-            #self.frame.grid_columnconfigure(i, weight=1)
-            
-        #self.frame.grid_rowconfigure(1, weight=1)
-        
-        #parent.frame['padding'] = (5,10,5,10)
+
         
         def switch():
-            holder = var.properties[0]
-            var.properties[0] = var.properties[1]
-            var.properties[1] = holder
-            self.menu2.configure(text=var.properties[0])
-            self.menu3.configure(text=var.properties[1])
+            
+            holder = self.entry.get()
+            holder2 = self.entry2.get()
+            self.entry.delete(0, '')
+            self.entry2.delete(0, '')
+            self.entry.insert(0, holder2)
+            self.entry2.insert(0, holder)
             pass
+
+
+    #---------------------------------------------------------------------------------------------------------------------------#
+
+        def load_data(filename):
+            stations = []
+            with open(filename, newline='', encoding='utf-8') as csvfile:
+                reader = csv.reader(csvfile, delimiter=';')
+                next(reader)  # Pomija nagłówki
+                for row in reader:
+                    stations.append(row[0])  # Dodaje tylko nazwy stacji
+            return stations
+
+        # Funkcja do aktualizacji listy podpowiedzi
+        def update_listbox(data):
+            # Usunięcie wszystkich elementów z listbox
+            self.listbox.delete(0, tk.END)
+            # Dodanie nowych elementów do listbox
+            for item in data:
+                self.listbox.insert(tk.END, item)
+
+        # Funkcja wywoływana przy każdej zmianie tekstu w Entry
+        def on_keyrelease(event):
+            
+            self.listbox.grid(padx=10, pady=1, row=2, column=0, sticky="e")
+            self.listbox.bind('<<ListboxSelect>>', on_listbox_select)
+            # Pobranie tekstu z Entry
+            value = self.entry.get().lower().replace(' ','+')
+            if value == '':
+                data = stations  # Wyświetla wszystkie stacje, gdy pole jest puste
+            else:
+                data = [item.replace('+',' ') for item in stations if value in item.lower()]
+
+            # Aktualizacja listbox
+            update_listbox(data)
+
+        # Funkcja wywoływana przy kliknięciu na element listbox
+        def on_listbox_select(event):
+            self.switch1['state'] = "enabled"
+            # Pobranie indeksu zaznaczonego elementu
+            selection = self.listbox.curselection()
+            if selection:
+                index = selection[0]
+                # Pobranie tekstu zaznaczonego elementu
+                selected_text = self.listbox.get(index)
+                # Wprowadzenie tekstu do Entry
+                self.entry.delete(0, tk.END)
+                self.entry.insert(0, selected_text)
+            self.listbox.grid_remove()
+        
+
+        ####################################################################
+
+
+        # Funkcja do aktualizacji listy podpowiedzi
+        def update_listbox2(data):
+            # Usunięcie wszystkich elementów z listbox
+            self.listbox2.delete(0, tk.END)
+            # Dodanie nowych elementów do listbox
+            for item in data:
+                self.listbox2.insert(tk.END, item)
+
+        # Funkcja wywoływana przy każdej zmianie tekstu w Entry
+        def on_keyrelease2(event):
+            
+            self.listbox2.grid(padx=10, pady=1, row=2, column=2, sticky="e")
+            self.listbox2.bind('<<ListboxSelect>>', on_listbox_select2)
+            # Pobranie tekstu z Entry
+            value = self.entry2.get().lower().replace(' ','+')
+            if value == '':
+                data = stations  # Wyświetla wszystkie stacje, gdy pole jest puste
+            else:
+                data = [item.replace('+',' ') for item in stations if value in item.lower()]
+
+            # Aktualizacja listbox
+            update_listbox2(data)
+
+        # Funkcja wywoływana przy kliknięciu na element listbox
+        def on_listbox_select2(event):
+            self.switch1['state'] = "enabled"
+            # Pobranie indeksu zaznaczonego elementu
+            selection = self.listbox2.curselection()
+            if selection:
+                index = selection[0]
+                # Pobranie tekstu zaznaczonego elementu
+                selected_text2 = self.listbox2.get(index)
+                # Wprowadzenie tekstu do Entry
+                self.entry2.delete(0, tk.END)
+                self.entry2.insert(0, selected_text2)
+            self.listbox2.grid_remove()
+
+    #---------------------------------------------------------------------------------------------------------------------------#
 
         def find_data(date):
             var.properties[3] = date.get()
-            
-        def update():
-            var.resultRow = 3
-            if var.res1 != 0:
-                var.res1.frame1.destroy()
-                var.res2.frame1.destroy()
-
-            print(f"2: {var.properties}")
-
-            if type(var.properties[2]) == str:
                 
-                var.res1 = SearchResult(parent)
-                var.resultRow +=1
-                var.res2 = SearchResult(parent)
-            
+        def update():
+            var.properties[0] = self.entry.get()
+            var.properties[1] = self.entry2.get()
 
-        ##########
+            print(var.properties)
+        
+
+
+
 
         mystyle = ttk.Style()
         mystyle.configure("quocalcus.Outline.TMenubutton", font=("Tahoma", 20))
@@ -201,60 +285,42 @@ class SearchSettings(ttk.Frame):
         dateStyle = ttk.Style()
         dateStyle.configure("quocalcus.TCalendar", font=("Tahoma", 20))
 
-        #dateEntryStyle = ttk.Style()
-        #dateEntryStyle.configure("quocalcus.Outline.TButton", font=("Tahoma", 20))
+        entryStyle = ttk.Style()
+        entryStyle.configure("quocalcus.TEntry", font=("Tahoma", 20))
 
-        # Przycisk menu zkad jedziemy
-        hours = [f"{hour:02d}:00" for hour in range(24)]
-        def change2(text):
-            self.menu2.configure(text=text)
-            var.properties[0] = text
-            if text != "Kraków":
-                self.menu3.configure(text="Kraków")
-                var.properties[1] = "Kraków"
-                self.menu3['state'] = "disabled"
-            else:
-                self.menu3['state'] = "enable"
-            
 
-        self.menu2 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Z kąd jedziemy?", width=15)
-        self.menu2.grid(padx=10, pady=10, row=1, column=0, sticky="e")
+        #---------------------------------------------------------------------------------------------------------------------------#
 
-        # Itemy w menu
-        in_menu2 = ttk.Menu(self.menu2)
-        item_var2 = tk.StringVar() 
-        for x in ('Kraków', 'Nowy Targ', "Nowy Sącz", "Słomniki", 'Zakopane'):
-            in_menu2.add_radiobutton(label=x, variable=item_var2, command=lambda x=x: change2(x), hidemargin="False")
-        self.menu2['menu'] = in_menu2
-        #########
+        
+        stations = load_data('Hafas_Codes.csv')
 
+        self.entry = ttk.Entry(self.frame, style='quocalcus.TEntry', width=20, font=("Tahoma", 20))
+        self.entry.insert(0,"Skąd jedziemy?")
+        self.entry.grid(padx=10, pady=10, row=1, column=0, sticky="e")
+
+        self.listbox = tk.Listbox(self.frame, width=44, height=6,font=("Tahoma", 10))
+        # Powiązanie funkcji z zdarzeniem
+        self.entry.bind('<KeyRelease>', on_keyrelease)
+        
+        
+    #-----------------------------------------------------switch----------------------------------------------------------------------#
         self.switch1 = ttk.Button(self.frame, style="quocalcus.Outline.TButton", text="<>", command=switch)
         self.switch1.grid(padx=10, pady=10, row=1, column=1, sticky="")
 
         self.switch1['state'] = "disabled"
 
-        #########
+    #---------------------------------------------------------------------------------------------------------------------------#
 
-         # Przycisk menu do kad jedziemy
-        hours = [f"{hour:02d}:00" for hour in range(24)]
-        def change3(text):
-            self.menu3.configure(text=text)
-            self.switch1['state'] = "enable"
-            var.properties[1] = text
-        
-        
-            
-        self.menu3 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="Dokąd jedziemy?", width=15)
-        self.menu3.grid(padx=10, pady=10, row=1, column=2, sticky="e")
+        # Przycisk menu do kad jedziemy
+        self.entry2 = ttk.Entry(self.frame, style='quocalcus.TEntry', width=20, font=("Tahoma", 20))
+        self.entry2.insert(0,"Gdzie jedziemy?")
+        self.entry2.grid(padx=10, pady=10, row=1, column=2, sticky="e")
+        self.listbox2 = tk.Listbox(self.frame, width=44, height=6,font=("Tahoma", 10))
+        # Powiązanie funkcji z zdarzeniem
+        self.entry2.bind('<KeyRelease>', on_keyrelease2)
 
-        # Itemy w menu
-        in_menu3 = ttk.Menu(self.menu2)
-        item_var3 = tk.StringVar() 
-        for x in ('Kraków', 'Nowy Targ', "Nowy Sącz", "Słomniki", 'Zakopane'):
-            in_menu3.add_radiobutton(label=x, variable=item_var3, command=lambda x=x: change3(x))
-        self.menu3['menu'] = in_menu3
 
-        ##########
+    #---------------------------------------------------------------------------------------------------------------------------#
 
         def change1(text):
             self.menu1.configure(text=text)
@@ -267,13 +333,13 @@ class SearchSettings(ttk.Frame):
         # Itemy w menu
         in_menu1 = ttk.Menu(self.menu1)
         item_var = tk.StringVar()
-        for x in hours:
+        for x in [f"{hour:02d}:00" for hour in range(24)]:
             in_menu1.add_radiobutton(label=x, variable=item_var, command=lambda x=x: change1(x))
         self.menu1['menu'] = in_menu1
 
         ##########
 
-        self.cal = ttk.DateEntry(self.frame, style="quocalcus.TCalendar")
+        self.cal = ttk.DateEntry(self.frame, style="quocalcus.TCalendar",)
         self.cal.grid(padx=10, pady=10, row=1, column=4, sticky="e")  
 
         self.sv = tk.StringVar()
@@ -281,14 +347,10 @@ class SearchSettings(ttk.Frame):
         self.cal.entry.configure(textvariable=self.sv)
 
         ########## Przycisk wyszukiwania
-
         self.find = ttk.Button(self.frame, style="quocalcus.Outline.TButton", text="Szukaj", command=update)
         self.find.grid(padx=10, pady=10, row=1, column=5, sticky="e")
 
         #########
-        #cbvalues = ['option 1', 'option 2', 'option 3']
-        #self.cb = ttk.Combobox(self.frame, bootstyle='succes', values=cbvalues)
-        #self.cb.grid(padx=10, pady=10, row=1, column=6, sticky="e")
 
 class SearchResult(ttk.Frame):
     def __init__(self, parent):
