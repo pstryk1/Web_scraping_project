@@ -193,6 +193,7 @@ class SearchSettings(ttk.Frame):
 
         # Funkcja wywoływana przy każdej zmianie tekstu w Entry
         def on_keyrelease(event):
+            self.entry.configure(style = 'quocalcus.TEntry')
             
             self.listbox.grid(padx=10, pady=1, row=2, column=0, sticky="e")
             self.listbox.bind('<<ListboxSelect>>', on_listbox_select)
@@ -234,7 +235,7 @@ class SearchSettings(ttk.Frame):
 
         # Funkcja wywoływana przy każdej zmianie tekstu w Entry
         def on_keyrelease2(event):
-            
+            self.entry2.configure(style = 'quocalcus.TEntry')
             self.listbox2.grid(padx=10, pady=1, row=2, column=2, sticky="e")
             self.listbox2.bind('<<ListboxSelect>>', on_listbox_select2)
             # Pobranie tekstu z Entry
@@ -260,6 +261,13 @@ class SearchSettings(ttk.Frame):
                 self.entry2.delete(0, tk.END)
                 self.entry2.insert(0, selected_text2)
             self.listbox2.grid_remove()
+        
+        def on_right_click(event):
+            self.entry.delete(0, '')
+
+        def on_right_click2(event):
+            self.entry2.delete(0, '')
+
 
     #---------------------------------------------------------------------------------------------------------------------------#
 
@@ -269,7 +277,20 @@ class SearchSettings(ttk.Frame):
         def update():
             var.properties[0] = self.entry.get()
             var.properties[1] = self.entry2.get()
-
+            if var.properties[0]=='':
+                self.entry.insert(0, 'Pole wymagane')
+                self.entry.configure(style = 'danger.TEntry')
+                return
+            if var.properties[1]=='':
+                self.entry2.insert(0, 'Pole wymagane')
+                self.entry2.configure(style = 'danger.TEntry')
+                return
+            if var.properties[2] == 0:
+                self.menu1.configure(style='danger.Outline.TMenubutton')
+                return
+            if var.properties[3] == 0:
+                self.cal.configure(style='danger.TCalendar')
+                return
             print(var.properties)
         
 
@@ -288,6 +309,8 @@ class SearchSettings(ttk.Frame):
         entryStyle = ttk.Style()
         entryStyle.configure("quocalcus.TEntry", font=("Tahoma", 20))
 
+        menubuttonStyle = ttk.Style()
+        menubuttonStyle.configure('danger.Outline.TMenubutton', font=("Tahoma", 20))
 
         #---------------------------------------------------------------------------------------------------------------------------#
 
@@ -301,6 +324,7 @@ class SearchSettings(ttk.Frame):
         self.listbox = tk.Listbox(self.frame, width=44, height=6,font=("Tahoma", 10))
         # Powiązanie funkcji z zdarzeniem
         self.entry.bind('<KeyRelease>', on_keyrelease)
+        self.entry.bind('<Button-3>', on_right_click)
         
         
     #-----------------------------------------------------switch----------------------------------------------------------------------#
@@ -318,12 +342,14 @@ class SearchSettings(ttk.Frame):
         self.listbox2 = tk.Listbox(self.frame, width=44, height=6,font=("Tahoma", 10))
         # Powiązanie funkcji z zdarzeniem
         self.entry2.bind('<KeyRelease>', on_keyrelease2)
+        self.entry2.bind('<Button-3>', on_right_click2)
 
 
     #---------------------------------------------------------------------------------------------------------------------------#
 
         def change1(text):
-            self.menu1.configure(text=text)
+            #menubuttonStyle.configure('danger.Outline.TMenubutton', font=("Tahoma", 20))
+            self.menu1.configure(text=text, style='quocalcus.Outline.TMenubutton')
             var.properties[2] = text
             #parent.label1.config(text=text)
 
