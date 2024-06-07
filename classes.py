@@ -118,6 +118,8 @@ class transport:
         self.train_name = []
         self.top5_dep_time = []
         self.top5_arr_time = []
+        self.top6_dep_time = []
+        self.top6_arr_time = []
         self.train_change_city = []
 
 

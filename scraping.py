@@ -38,7 +38,7 @@ def search_transport(start, destination, hour, day):
         transport.extend(szwagropol_data)
         transport.extend(train_data)
 
-        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[0], '%H:%M')))[i] for i in range(6)], key= lambda o: o[0])
+        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1], '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
 
     elif (start == 'Zakopane' and destination == 'Kraków Główny') or (destination == 'Zakopane' and start == 'Kraków Główny'):
 
@@ -68,7 +68,7 @@ def search_transport(start, destination, hour, day):
         transport.extend(majer_data)
         transport.extend(train_data)
 
-        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[0], '%H:%M')))[i] for i in range(6)], key= lambda o: o[0])
+        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1], '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
 
     else:
 
@@ -77,20 +77,25 @@ def search_transport(start, destination, hour, day):
 
         transport = []
         counter = 0
-        for i in range(6):
-            if type(train.train_name[i]) != list:
-                transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i]])
-            else:
-                transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
-                counter += 1
+
+        if len(train.top6_dep_time) != 0:
+            for i in range(6):
+                if type(train.train_name[i]) != list:
+                    transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i]])
+                else:
+                    transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
+                    counter += 1
+        else:
+            raise ValueError('\nNie mozna wyszukac trasy z przeszlosci\n')
 
     return transport
 
 
 
-#print(search_transport('Nowy Sącz', 'Kraków Główny', '13:00', '31.05.2024'))
+#print(search_transport('Nowy Sącz', 'Kraków Główny', '12:00', '30.06.2024'))
 #print(search_transport('Zakopane', 'Kraków Główny', '10:00', '31.05.2024'))
-print(search_transport('Kraków Główny', 'Wilkowice', '11:00', '02.06.2024'))
+print(search_transport('Kraków Główny', 'Hajnówka', '11:00', '10.06.2024'))
+
 '''
 ab = cs.transport()
 
