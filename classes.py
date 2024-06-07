@@ -237,6 +237,57 @@ class transport:
         self.top5_arr_time = tuple([i[1] for i in top5_results])
         self.day_label = day
 
+    def AD(self,start,destination,leave, dates):
+        
+        self.start = start
+        self.destination = destination
+        self.leave = leave
+        self.date = dates
+        
+        self.dzien_tyg = ["poniedzialek","wtorek","sroda","czwartek","piatek"]
+        
+        self.strona = "https://www.busy-krk.pl/slomniki-krakow/"
+            
+        self.query = requests.get(self.strona)
+
+        self.soup = bs(self.query.content, 'html.parser')
+
+        self.timetable = []
+
+        self.rows = self.soup.find_all('tr')
+        self.headers = [header.get_text().strip() for header in self.rows[12].find_all('th')]
+        
+
+        for row in self.rows[1:]:
+            self.cells = row.find_all('td')
+            self.hour = None
+            for idx, cell in enumerate(self.cells):
+                self.text = cell.get_text().strip()
+                if self.text:
+                    if self.hour is None:
+                        self.hour = self.text
+                    else:
+                        if idx < len(self.headers):
+                            self.day = self.headers[idx]
+                            self.timetable.append([self.day, f"{self.hour}:{self.text}"])
+
+
+
+        if self.start == "Słomniki":
+            self.timetable = [i for i in self.timetable if i[0]][35:60]
+        else:
+            self.timetable = [i for i in self.timetable if i[0]][10:35]
+        
+        for i in self.timetable:
+           if len(i[1][2:]) > 4:
+               x = i[1][5:]
+               i[1] = i[1][:4]
+               self.timetable.append([i[0],i[1][:2] + x])
+            
+        for i in self.dzien_tyg:       
+            for j in self.timetable:
+                if j[0] == "pon. - pt.":
+                    self.timetable.append([i,j[1]])
         
     def train(self, start, destination, planned_dep_time, date):
 
