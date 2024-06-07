@@ -289,6 +289,8 @@ class transport:
                 if j[0] == "pon. - pt.":
                     self.timetable.append([i,j[1]])
         
+        return self.top5_departures
+        
     def train(self, start, destination, planned_dep_time, date):
 
         def station_code(station):
