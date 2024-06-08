@@ -9,6 +9,7 @@ from datetime import date
 import variables as var
 import webbrowser as web
 import csv
+import searching as search
 
 themes = ('quocalcus', 'flatly')
 import time
@@ -241,6 +242,16 @@ class SearchSettings(ttk.Frame):
             var.properties[3] = date.get()
                 
         def update():
+            var.resultRow = 3
+            #print(var.result[5])
+            
+            
+            if var.result[5] !=0:
+                for i in range(5):
+                    var.result[i].frame1.destroy()
+                    
+                del var.result
+            var.result=[0,0,0,0,0,0,0]
             var.properties[0] = self.entry.get()
             var.properties[1] = self.entry2.get()
             if var.properties[0]=='':
@@ -257,7 +268,10 @@ class SearchSettings(ttk.Frame):
             if var.properties[3] == 0:
                 self.cal.configure(style='danger.TCalendar')
                 return
+            for i in range(5):
+                var.result[i] = SearchResult(ttk)
             print(var.properties)
+
         mystyle = ttk.Style()
         mystyle.configure("quocalcus.Outline.TMenubutton", font=("Tahoma", 20))
 
@@ -349,48 +363,34 @@ class SearchResult(ttk.Frame):
                 web.open("https://www.szwagropol.pl/")
 
         #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
-        resultData = self.navigate()
-
-        self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10)
-        #self.frame.pack(padx=20, pady=20)
+        
+        resultData = search.search_transport(*var.properties)
+        print(resultData)
+        
+        self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=1200, height=100)
         self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
+        self.frame1.grid_propagate(False)
+        self.frame1.grid_columnconfigure(0, weight=1)
+        self.frame1.grid_rowconfigure(1, weight=0)
         self.frame1['borderwidth'] = 1
         ####
         #
-        for i in resultData:
+        col = 0
+        for i in resultData[var.resultRow-3]:
             self.label1 = ttk.Label(self.frame1 ,text=i, font=("Tahoma", 15))
             if resultData == "No results":
                 self.label1.config(bootstyle = 'danger')
-            #self.label1.pack(padx=20, pady=20)
-            self.label1.grid(padx = 10, pady = 10, row = 0, column=resultData.index(i),sticky='n')
+            
+            self.label1.grid(padx = 10, pady = 10, row = 0, column=col,sticky='n')
+            col+=1
         if resultData != "No results":
-            self.wabpage = ttk.Button(self.frame1, bootstyle=themes[parent.current_theme], text="Strona", command=lambda: openWeb(var.company))
+            self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(var.company))
             self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
-
+        var.resultRow+=1
+        """
     
 
-    def navigate(self):
-        #zawiły nawigator po zawiłych listach mateusza
-        if var.properties[1] == "Zakopane":
-            var.relation=0
-            var.destination = 1
-            var.dest_list = Szwagropol('ZAK')
-            var.company = "Szwagropol"
-        elif var.properties[1] == "Nowy Sącz":
-            var.relation=0
-            var.destination = 1
-            var.dest_list = Szwagropol('NS')
-            var.company = "Szwagropol"
-        elif var.properties[1] == "Kraków":
-            var.relation=1
-            if var.properties[0] == "Zakopane":
-                var.destination = 0
-                var.dest_list = Szwagropol('ZAK')
-            elif var.properties[0] == "Nowy Sącz":
-                var.destination = 0
-                var.dest_list = Szwagropol('NS')
-            var.company = "Szwagropol"
-
+    
         res = [var.company]
         day = 0
         finded = False
@@ -406,6 +406,7 @@ class SearchResult(ttk.Frame):
         if day >=24 or finded == False:
             print("No results")
             return "No results"
+        """
         
 
 
