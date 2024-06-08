@@ -120,7 +120,7 @@ def search_transport(start, destination, hour, day):
 
 #print(search_transport('Nowy Sącz', 'Kraków Główny', '12:00', '30.06.2024'))
 #print(search_transport('Zakopane', 'Kraków Główny', '12:00', '05.06.2024'))
-print(search_transport('Kraków Główny', 'Słomniki', '11:00', '12.06.2024'))
+print(search_transport('Kraków Główny', 'Słomniki', '11:00', '2024-06-11'))
 
 '''
 ab = cs.transport()

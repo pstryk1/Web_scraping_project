@@ -1,7 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 from bs4 import BeautifulSoup as bs
-from datetime import datetime
+from datetime import datetime, timedelta
 from lxml import html
 import requests
 import sys
@@ -291,9 +291,27 @@ class transport:
                 if j[0] == "pon. - pt.":
                     self.timetable.append([i,j[1]])
                     
-        print(self.timetable)
+            
+        self.timetable = [i for i in self.timetable if i[0] != 'pon. - pt.']
         
-        return self.timetable
+        print(self.timetable)
+        for i in self.timetable:
+            time_str = i[1]
+            time_obj = datetime.strptime(time_str, '%H:%M')
+            new_time_obj = time_obj + timedelta(minutes=36)
+            new_time_str = new_time_obj.strftime('%H:%M')
+            i.append(new_time_str)
+        
+        leave_time = datetime.strptime(self.leave, '%H:%M')
+        leave_date = datetime.strptime(self.date, '%Y-%m-%d')
+        day_of_week = leave_date.strftime('%A').lower()
+
+
+        for i in sorted(self.timetable, key = lambda x: abs( leave_time - datetime.strptime(x[1],'%H:%M'))):
+            if day_of_week in i[0] and len(self.top5_departures) < 5:
+                self.top5_departures.append(i)
+        
+        return self.top5_departures
     
 
         
