@@ -281,10 +281,21 @@ class transport:
             self.timetable = [i for i in self.timetable if i[0]][10:35]
         
         for i in self.timetable:
-           if len(i[1][2:]) > 4:
-               x = i[1][5:]
-               i[1] = i[1][:4]
-               self.timetable.append([i[0],i[1][:2] + x])
+            
+            if len(i[1][2:]) > 4:
+                x = i[1][5:]
+                if len(i[1]) < 5: 
+                    i[1] = i[1][:4]
+                else:
+                    i[1] = i[1][:5] 
+                if ":" in i[1][:2]:
+                    self.timetable.append([i[0],i[1][:2] + x])
+                else:
+                    self.timetable.append([i[0],i[1][:2] +':'+ x.strip()])
+                   
+        for i in self.timetable:
+            i[1] = i[1].strip()
+                   
             
         for i in self.dzien_tyg:       
             for j in self.timetable:
@@ -293,21 +304,22 @@ class transport:
                     
             
         self.timetable = [i for i in self.timetable if i[0] != 'pon. - pt.']
-        
-        print(self.timetable)
+
+
         for i in self.timetable:
-            time_str = i[1]
+            time_str = i[1].replace(' ', ':').strip()
             time_obj = datetime.strptime(time_str, '%H:%M')
             new_time_obj = time_obj + timedelta(minutes=36)
             new_time_str = new_time_obj.strftime('%H:%M')
             i.append(new_time_str)
         
         leave_time = datetime.strptime(self.leave, '%H:%M')
-        leave_date = datetime.strptime(self.date, '%Y-%m-%d')
+        leave_date = datetime.strptime(self.date, '%d.%m.%Y')
         day_of_week = leave_date.strftime('%A').lower()
 
 
-        for i in sorted(self.timetable, key = lambda x: abs( leave_time - datetime.strptime(x[1],'%H:%M'))):
+        self.top5_departures = []
+        for i in sorted(self.timetable, key = lambda x: abs( leave_time - datetime.strptime(x[1].replace(' ', ':'),'%H:%M'))):
             if day_of_week in i[0] and len(self.top5_departures) < 5:
                 self.top5_departures.append(i)
         

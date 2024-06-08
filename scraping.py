@@ -94,7 +94,7 @@ def search_transport(start, destination, hour, day):
         transport.extend(zwrot_data)
         transport.extend(train_data)
 
-        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1], '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
+        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1].replace(' ',':'), '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
         
     else:
 
@@ -120,12 +120,12 @@ def search_transport(start, destination, hour, day):
 
 #print(search_transport('Nowy Sącz', 'Kraków Główny', '12:00', '30.06.2024'))
 #print(search_transport('Zakopane', 'Kraków Główny', '12:00', '05.06.2024'))
-print(search_transport('Kraków Główny', 'Słomniki', '11:00', '2024-06-11'))
+print(search_transport('Słomniki', 'Kraków Główny', '15:00', '11.06.2024'))
 
 '''
 ab = cs.transport()
 
-ab.train('Kraków Główny', 'Niedźwiedź', '10:00', '2024-06-11')
+ab.train('Kraków Główny', 'Niedźwiedź', '9:00', '2024-06-11')
 
 print(ab.start)
 print(ab.destination)
