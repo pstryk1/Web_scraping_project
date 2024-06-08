@@ -71,9 +71,30 @@ def search_transport(start, destination, hour, day):
 
         transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1], '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
         
-    elif (start == 'Zakopane' and destination == 'Kraków Główny') or (destination == 'Zakopane' and start == 'Kraków Główny'):
+    elif (start == 'Kraków Główny' and destination == 'Słomniki') or (destination == 'Kraków Główny' and start == 'Słomniki'):
+        
         AD = cs.transport()
-        AD.AD(start, destination, hour, day_name(day))
+        zwrot = AD.AD(start, destination, hour, day)
+        
+        train = cs.transport()
+        train.train(start, destination, hour, day)
+
+        zwrot_data = [['AD', zwrot[i][1], zwrot[i][2]] for i in range(5)]
+        
+        train_data = []
+        counter = 0
+        for i in range(6):
+            if type(train.train_name[i]) != list:
+                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i]])
+            else:
+                train_data.append([ train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
+                counter += 1
+
+        transport = []
+        transport.extend(zwrot_data)
+        transport.extend(train_data)
+
+        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1], '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
         
     else:
 
@@ -98,8 +119,8 @@ def search_transport(start, destination, hour, day):
 
 
 #print(search_transport('Nowy Sącz', 'Kraków Główny', '12:00', '30.06.2024'))
-print(search_transport('Zakopane', 'Kraków Główny', '12:00', '05.06.2024'))
-#print(search_transport('Kraków Główny', 'Słomniki', '11:00', '11.06.2024'))
+#print(search_transport('Zakopane', 'Kraków Główny', '12:00', '05.06.2024'))
+print(search_transport('Kraków Główny', 'Słomniki', '11:00', '12.06.2024'))
 
 '''
 ab = cs.transport()

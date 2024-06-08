@@ -238,7 +238,7 @@ class transport:
         self.top5_arr_time = tuple([i[1] for i in top5_results])
         self.day_label = day
 
-    '''
+
     def AD(self,start,destination,leave, dates):
         
         self.start = start
@@ -290,10 +290,12 @@ class transport:
             for j in self.timetable:
                 if j[0] == "pon. - pt.":
                     self.timetable.append([i,j[1]])
+                    
+        print(self.timetable)
         
-        #return self.top5_departures
+        return self.timetable
     
-    '''
+
         
     def train(self, start, destination, planned_dep_time, date):
 
