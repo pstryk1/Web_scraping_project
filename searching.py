@@ -24,6 +24,8 @@ def search_transport(start, destination, hour, day):
         train = cs.transport()
         train.train(start, destination, hour, day)
 
+        if len(train.top6_dep_time):
+            train.train(start, destination, hour, day)
 
         szwagropol_data = [['Szwagropol', szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i], 'Bezpośrednio', szwagropol.page] for i in range(5)]
         
@@ -54,6 +56,9 @@ def search_transport(start, destination, hour, day):
         print(f"czy jest: {destination}-{hour}-{day_name(day)}")
         train.train(start, destination, hour, day)
 
+        if len(train.top6_dep_time):
+            train.train(start, destination, hour, day)
+
         szwagropol_data = [['Szwagropol', szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i], 'Bezpośrednio', szwagropol.page] for i in range(5)]
         majer_data = [['Majer', majer.top5_dep_time[i], majer.top5_arr_time[i], 'Bezpośrednio', majer.page] for i in range(5)]
         
@@ -76,7 +81,10 @@ def search_transport(start, destination, hour, day):
     else:
 
         train = cs.transport()
-        train.train(start, destination, hour, day)        
+        train.train(start, destination, hour, day)
+
+        if len(train.top6_dep_time):
+            train.train(start, destination, hour, day)
 
         transport = []
         counter = 0
@@ -88,9 +96,7 @@ def search_transport(start, destination, hour, day):
                 else:
                     transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter], train.page])
                     counter += 1
-        else:
-            raise ValueError('\nNie mozna wyszukac trasy z przeszlosci\n')
-    print("\n\n")
+
     return transport
 
 

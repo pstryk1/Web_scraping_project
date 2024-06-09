@@ -16,33 +16,6 @@ import time
 
 
 
-def polish_sign(word):
-    signs = {
-        'ą': '%C4%85',
-        'ć': '%C4%87',
-        'ę': '%C4%99',
-        'ł': '%C5%82',
-        'ń': '%C5%84',
-        'ó': '%C3%83',
-        'ś': '%C5%9B',
-        'ź': '%C5%BA',
-        'ż': '%C5%BC',
-        'Ć': '%C4%86',
-        'Ł': '%C5%81',
-        'Ś': '%C5%9A',
-        'Ź': '%C5%B9',
-        'Ż': '%C5%BB'
-    }
-    for i in range(len(word)):
-        if word[i] in signs:
-            word = word.replace(word[i], signs[word[i]])
-    return word
-
-
-
-
-
-
 class FullscreenWindow:
 
     def __init__(self):
@@ -243,6 +216,13 @@ class SearchSettings(ttk.Frame):
                 
         def update():
             var.resultRow = 3
+
+            try:
+                internet_connection_test = requests.get('http://dziobak.pl/')
+            except:
+                label = ttk.Label(text='Brak połączenia internetowego', font=("Monsterrat", 25), style='danger')
+                label.grid(padx = 10, pady = 10, row = 3, column=0, sticky='n')
+                label.grid_rowconfigure(2, weight=2)
             #print(var.result[5])
             
             
@@ -658,7 +638,7 @@ class transport:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{zero_link+str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='  
         else:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{hour_link}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={hour_link}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
-        #print(self.page)
+        print(self.page)
         query = requests.get(self.page)
         scrape = bs(query.text, 'lxml')
 
@@ -690,6 +670,7 @@ class transport:
                     all_rows_new = all_rows[i][0]+' '+all_rows[i][1]
                 result_rows.append(all_rows_new)
             results.append(result_rows)
+
     
         if len(results) == 0:
             self.is_connection = False
