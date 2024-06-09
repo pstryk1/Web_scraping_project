@@ -268,8 +268,7 @@ class SearchSettings(ttk.Frame):
             if var.properties[3] == 0:
                 self.cal.configure(style='danger.TCalendar')
                 return
-            for i in range(5):
-                var.result[i] = SearchResult(ttk)
+            wyniki  = SearchResult(ttk)
             #print(var.properties)
 
         mystyle = ttk.Style()
@@ -360,32 +359,35 @@ class SearchResult(ttk.Frame):
 
         def openWeb(comp):
             web.open(str(comp))
-
-        #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
         
         resultData = search.search_transport(*var.properties)
-        #print(resultData)
+
+        #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
+        for j in range(6):
+
+            
+            #print(resultData)
+            
+            self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=1200, height=100)
+            self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
+            self.frame1.grid_propagate(False)
+            for i in range(6):
+                self.frame1.grid_columnconfigure(i, weight=1)
+            self.frame1.grid_rowconfigure(1, weight=0)
+            self.frame1['borderwidth'] = 1
+            ####
+            #
+            
+            
+            col = 0
+            for i in range(4):
         
-        self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=1200, height=100)
-        self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
-        self.frame1.grid_propagate(False)
-        for i in range(6):
-            self.frame1.grid_columnconfigure(i, weight=1)
-        self.frame1.grid_rowconfigure(1, weight=0)
-        self.frame1['borderwidth'] = 1
-        ####
-        #
-        
-        
-        col = 0
-        for i in range(4):
-    
-            self.label1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][i], font=("Tahoma", 15))
-            self.label1.grid(padx = 10, pady = 10, row = 0, column=col,sticky='n')
-            col+=1
-        self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(resultData[var.resultRow-3][4]))
-        self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
-        var.resultRow+=1
+                self.label1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][i], font=("Tahoma", 15))
+                self.label1.grid(padx = 10, pady = 10, row = 0, column=col,sticky='n')
+                col+=1
+            self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(resultData[var.resultRow-3][4]))
+            self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
+            var.resultRow+=1
         
     
         """
