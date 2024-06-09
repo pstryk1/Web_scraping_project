@@ -246,12 +246,12 @@ class SearchSettings(ttk.Frame):
             #print(var.result[5])
             
             
-            if var.result[5] !=0:
-                for i in range(5):
-                    var.result[i].frame1.destroy()
+            #if var.result[5] !=0:
+                #for i in range(5):
+                    #var.result[i].frame1.destroy()
                     
-                del var.result
-            var.result=[0,0,0,0,0,0,0]
+                #del var.result
+            #var.result=[0,0,0,0,0,0,0]
             var.properties[0] = self.entry.get()
             var.properties[1] = self.entry2.get()
             if var.properties[0]=='':
@@ -270,7 +270,7 @@ class SearchSettings(ttk.Frame):
                 return
             for i in range(5):
                 var.result[i] = SearchResult(ttk)
-            print(var.properties)
+            #print(var.properties)
 
         mystyle = ttk.Style()
         mystyle.configure("quocalcus.Outline.TMenubutton", font=("Tahoma", 20))
@@ -299,7 +299,7 @@ class SearchSettings(ttk.Frame):
         self.listbox = tk.Listbox(self.frame, width=44, height=6,font=("Tahoma", 10))
         # Powiązanie funkcji z zdarzeniem
         self.entry.bind('<KeyRelease>', on_keyrelease)
-        self.entry.bind('<Button-3>', on_right_click)
+        self.entry.bind('<Button-1>', on_right_click)
         
         
     #-----------------------------------------------------switch----------------------------------------------------------------------#
@@ -359,13 +359,12 @@ class SearchResult(ttk.Frame):
 
 
         def openWeb(comp):
-            if comp == "Szwagropol":
-                web.open("https://www.szwagropol.pl/")
+            web.open(str(comp))
 
         #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
         
         resultData = search.search_transport(*var.properties)
-        print(resultData)
+        #print(resultData)
         
         self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=1200, height=100)
         self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
@@ -376,21 +375,20 @@ class SearchResult(ttk.Frame):
         self.frame1['borderwidth'] = 1
         ####
         #
+        
+        
         col = 0
-        for i in resultData[var.resultRow-3]:
-            self.label1 = ttk.Label(self.frame1 ,text=i, font=("Tahoma", 15))
-            if resultData == "No results":
-                self.label1.config(bootstyle = 'danger')
-            
+        for i in range(4):
+    
+            self.label1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][i], font=("Tahoma", 15))
             self.label1.grid(padx = 10, pady = 10, row = 0, column=col,sticky='n')
             col+=1
-        if resultData != "No results":
-            self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(var.company))
-            self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
+        self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(resultData[var.resultRow-3][4]))
+        self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
         var.resultRow+=1
-        """
+        
     
-
+        """
     
         res = [var.company]
         day = 0
@@ -658,7 +656,7 @@ class transport:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{zero_link+str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='  
         else:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{hour_link}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={hour_link}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
-        print(self.page)
+        #print(self.page)
         query = requests.get(self.page)
         scrape = bs(query.text, 'lxml')
 

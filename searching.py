@@ -46,11 +46,12 @@ def search_transport(start, destination, hour, day):
 
         szwagropol = cs.transport()
         szwagropol.szwagropol(start, destination, hour, day_name(day))
-        print(szwagropol.top5_dep_time)
+        #print(szwagropol.top5_dep_time)
         majer = cs.transport()
         majer.majer(start, destination, hour, day_name(day))
 
         train = cs.transport()
+        print(f"czy jest: {destination}-{hour}-{day_name(day)}")
         train.train(start, destination, hour, day)
 
         szwagropol_data = [['Szwagropol', szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i], 'Bezpośrednio', szwagropol.page] for i in range(5)]
@@ -58,6 +59,7 @@ def search_transport(start, destination, hour, day):
         
         train_data = []
         counter = 0
+        print(train.start)
         for i in range(6):
             if type(train.train_name[i]) != list:
                 train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])
@@ -88,7 +90,7 @@ def search_transport(start, destination, hour, day):
                     counter += 1
         else:
             raise ValueError('\nNie mozna wyszukac trasy z przeszlosci\n')
-
+    print("\n\n")
     return transport
 
 
