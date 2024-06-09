@@ -95,7 +95,27 @@ class SearchSettings(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
 
-        self.frame = tk.Frame(parent.ttk, bd=2, relief="solid", padx=10, pady=10, width=100)
+
+        mystyle = ttk.Style()
+        mystyle.configure("quocalcus.Outline.TMenubutton", font=("Tahoma", 20))
+
+        buttonStyle = ttk.Style()
+        buttonStyle.configure("quocalcus.Outline.TButton", font=("Tahoma", 20))
+
+        dateStyle = ttk.Style()
+        dateStyle.configure("quocalcus.TCalendar", font=("Tahoma", 20))
+
+        entryStyle = ttk.Style()
+        entryStyle.configure("quocalcus.TEntry", font=("Tahoma", 20), background="#0f2e52")
+
+        menubuttonStyle = ttk.Style()
+        menubuttonStyle.configure('danger.Outline.TMenubutton', font=("Tahoma", 20))
+
+        frame = ttk.Style()
+        frame.configure("quocalcus.TFrame", bordercolor = '#08bad1')
+
+
+        self.frame = ttk.Frame(parent.ttk, relief="solid",  width=100, style="quocalcus.TFrame")
         self.frame.pack_propagate(False)
         self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='n')
         self.frame['borderwidth'] = 1
@@ -251,20 +271,6 @@ class SearchSettings(ttk.Frame):
             wyniki  = SearchResult(ttk)
             #print(var.properties)
 
-        mystyle = ttk.Style()
-        mystyle.configure("quocalcus.Outline.TMenubutton", font=("Tahoma", 20))
-
-        buttonStyle = ttk.Style()
-        buttonStyle.configure("quocalcus.Outline.TButton", font=("Tahoma", 20))
-
-        dateStyle = ttk.Style()
-        dateStyle.configure("quocalcus.TCalendar", font=("Tahoma", 20))
-
-        entryStyle = ttk.Style()
-        entryStyle.configure("quocalcus.TEntry", font=("Tahoma", 20))
-
-        menubuttonStyle = ttk.Style()
-        menubuttonStyle.configure('danger.Outline.TMenubutton', font=("Tahoma", 20))
 
         #---------------------------------------------------------------------------------------------------------------------------#
 
@@ -332,7 +338,7 @@ class SearchSettings(ttk.Frame):
 
         #########
 
-class SearchResult(ttk.Frame):
+class SearchResult():
     def __init__(self, parent):
         super().__init__()
 
@@ -348,26 +354,46 @@ class SearchResult(ttk.Frame):
             
             #print(resultData)
             
-            self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=1200, height=100)
+            self.frame1 = ttk.Frame(relief="solid",  width=1000, height=100, style="quocalcus.TFrame")
             self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
             self.frame1.grid_propagate(False)
             for i in range(6):
                 self.frame1.grid_columnconfigure(i, weight=1)
             self.frame1.grid_rowconfigure(1, weight=0)
             self.frame1['borderwidth'] = 1
-            ####
-            #
+
+            value1 = [i.replace("{", ' ') for i in resultData[var.resultRow-3][0]]
             
+
+
+            self.label1 = ttk.Label(self.frame1 ,text=value1, font=("Tahoma", 10))
+            self.label1.place(anchor='w', relx=0.005, rely=0.13)
+
+            self.godzina1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][1], font=("Tahoma", 20), foreground='white')
+            self.godzina1.place(anchor='w', relx=0.005, rely=0.75)
+
+            self.label = ttk.Label(self.frame1 ,text='Odjazd:', font=("Tahoma", 8))
+            self.label.place(anchor='w', relx=0.005, rely=0.45)
+
+            self.label3 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][2], font=("Tahoma", 20), foreground='white')
+            self.label3.place(anchor='w', relx=0.25, rely=0.75)
+
+            self.label = ttk.Label(self.frame1 ,text='Przyjazd:', font=("Tahoma", 8))
+            self.label.place(anchor='w', relx=0.25, rely=0.45)
+
             
+            """
             col = 0
             for i in range(4):
         
-                self.label1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][i], font=("Tahoma", 15))
-                self.label1.grid(padx = 10, pady = 10, row = 0, column=col,sticky='n')
+                self.label1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][i], font=("Tahoma", 13))
+                self.label1.grid(padx = 10, pady = 5, row = 0, column=col,sticky='n')
                 col+=1
+        
+            """
             var.links.append(resultData[var.resultRow-3][4])
             self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(resultData[var.resultRow-3][4]))
-            self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
+            self.wabpage.place(anchor='e', relx=0.95, rely=0.5)
             var.resultRow+=1
         
     
