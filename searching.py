@@ -25,15 +25,15 @@ def search_transport(start, destination, hour, day):
         train.train(start, destination, hour, day)
 
 
-        szwagropol_data = [['Szwagropol', szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i]] for i in range(5)]
+        szwagropol_data = [['Szwagropol', szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i], 'Bezpośrednio', szwagropol.page] for i in range(5)]
         
         train_data = []
         counter = 0
         for i in range(6):
             if type(train.train_name[i]) != list:
-                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i]])
+                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])
             else:
-                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
+                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter], train.page])
                 counter += 1
 
         transport = []
@@ -53,16 +53,16 @@ def search_transport(start, destination, hour, day):
         train = cs.transport()
         train.train(start, destination, hour, day)
 
-        szwagropol_data = [['Szwagropol', szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i]] for i in range(5)]
-        majer_data = [['Majer', majer.top5_dep_time[i], majer.top5_arr_time[i]] for i in range(5)]
+        szwagropol_data = [['Szwagropol', szwagropol.top5_dep_time[i], szwagropol.top5_arr_time[i], 'Bezpośrednio', szwagropol.page] for i in range(5)]
+        majer_data = [['Majer', majer.top5_dep_time[i], majer.top5_arr_time[i], 'Bezpośrednio', majer.page] for i in range(5)]
         
         train_data = []
         counter = 0
         for i in range(6):
             if type(train.train_name[i]) != list:
-                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i]])
+                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])
             else:
-                train_data.append([ train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
+                train_data.append([ train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter], train.page])
                 counter += 1
 
         transport = []
@@ -82,9 +82,9 @@ def search_transport(start, destination, hour, day):
         if len(train.top6_dep_time) != 0:
             for i in range(6):
                 if type(train.train_name[i]) != list:
-                    transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i]])
+                    transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])
                 else:
-                    transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
+                    transport.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter], train.page])
                     counter += 1
         else:
             raise ValueError('\nNie mozna wyszukac trasy z przeszlosci\n')
