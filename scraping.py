@@ -7,6 +7,8 @@ import sys
 from datetime import datetime
 import classes as cs
 import variables as var
+from PIL import Image
+Image.CUBIC = Image.BICUBIC
 
 def start():
     #startScreen.destroy()
