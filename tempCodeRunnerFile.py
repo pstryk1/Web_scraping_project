@@ -1,1 +1,1 @@
-print(search_transport('Kraków Główny', 'Słomniki', '11:00', '11.06.2024'))
+comp
