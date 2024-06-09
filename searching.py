@@ -59,7 +59,7 @@ def search_transport(start, destination, hour, day):
         
         train_data = []
         counter = 0
-        print(train.start)
+        print(train.top6_dep_time)
         for i in range(6):
             if type(train.train_name[i]) != list:
                 train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])

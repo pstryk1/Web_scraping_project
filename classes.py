@@ -412,26 +412,26 @@ class SearchResult(ttk.Frame):
 def Labels(label, bus):
     if bus == "Szwagropol":
         all_labels = {
-            '(1-5)': ('poniedzialek','wtorek','sroda','czwartek','piatek'),
-            '(1-6)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'sobota'),
-            '(1-7)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'sobota', 'niedziela'),
-            '(5-7)': ('piatek', 'sobota', 'niedziela'),
+            '(1-5)': ('poniedziałek','wtorek','środa','czwartek','piątek'),
+            '(1-6)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota'),
+            '(1-7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota', 'niedziela'),
+            '(5-7)': ('piątek', 'sobota', 'niedziela'),
             '(6-7)': ('sobota','niedziela'),
-            '(1-5,7)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'niedziela'),
-            '(5)': ('piatek'),
+            '(1-5,7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'niedziela'),
+            '(5)': ('piątek'),
             '(6)': ('sobota'),
             '(7)': ('niedziela')
         }
     elif bus == "Majer":
                 all_labels = {
-            '(1,7)': ('poniedzialek','wtorek','sroda','czwartek','piatek', 'sobota', 'niedziela'),
-            '(5,6,7)': ('piatek', 'sobota', 'niedziela'),
-            '(6,7,1)': ('sobota','niedziela','poniedzialek'),
+            '(1,7)': ('poniedziałek','wtorek','środa','czwartek','piątek', 'sobota', 'niedziela'),
+            '(5,6,7)': ('piątek', 'sobota', 'niedziela'),
+            '(6,7,1)': ('sobota','niedziela','poniedziałek'),
             '(6,7)': ('sobota', 'niedziela'),
-            '(5)': ('piatek'),
+            '(5)': ('piątek'),
             '(6)': ('sobota'),
             '(7)': ('niedziela'),
-            '(1)': ('poniedzialek'),
+            '(1)': ('poniedziałek'),
         }
     return all_labels[label]
 
@@ -574,7 +574,7 @@ class transport:
         self.leave = leave
         self.date = dates
         
-        self.dzien_tyg = ["poniedzialek","wtorek","sroda","czwartek","piatek"]
+        self.dzien_tyg = ["poniedziałek","wtorek","środa","czwartek","piątek"]
         
         self.strona = "https://www.busy-krk.pl/slomniki-krakow/"
             
