@@ -365,6 +365,7 @@ class SearchResult(ttk.Frame):
                 self.label1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][i], font=("Tahoma", 15))
                 self.label1.grid(padx = 10, pady = 10, row = 0, column=col,sticky='n')
                 col+=1
+            var.links.append(resultData[var.resultRow-3][4])
             self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(resultData[var.resultRow-3][4]))
             self.wabpage.grid(padx=10, pady=10, row=0, column=5, sticky="nes")
             var.resultRow+=1

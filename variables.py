@@ -13,3 +13,4 @@ res2 = 0
 resultRow = 3
 relation = 0
 result=[0,0,0,0,0,0,0]
+links = []
