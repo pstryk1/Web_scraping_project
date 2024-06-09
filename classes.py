@@ -317,7 +317,7 @@ class SearchSettings(ttk.Frame):
         self.listbox2 = tk.Listbox(self.frame, width=44, height=6,font=("Tahoma", 10))
         # Powiązanie funkcji z zdarzeniem
         self.entry2.bind('<KeyRelease>', on_keyrelease2)
-        self.entry2.bind('<Button-3>', on_right_click2)
+        self.entry2.bind('<Button-1>', on_right_click2)
 
 
     #---------------------------------------------------------------------------------------------------------------------------#
@@ -370,7 +370,8 @@ class SearchResult(ttk.Frame):
         self.frame1 = tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=1200, height=100)
         self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
         self.frame1.grid_propagate(False)
-        self.frame1.grid_columnconfigure(0, weight=1)
+        for i in range(6):
+            self.frame1.grid_columnconfigure(i, weight=1)
         self.frame1.grid_rowconfigure(1, weight=0)
         self.frame1['borderwidth'] = 1
         ####
