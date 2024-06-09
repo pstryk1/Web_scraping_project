@@ -3,7 +3,7 @@ import ttkbootstrap as ttk
 
 hour = ''
 data = ''
-properties = [0, 0, 0, 0]
+properties = [0, 0, '00:00', 0]
 theme = 0
 destination = ""
 dest_list = []
