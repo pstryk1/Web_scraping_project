@@ -649,12 +649,13 @@ class transport:
             all_rows = []
             for row in table:
                 all_rows.append(row.text.split())
-
+            print(all_rows)
             result_rows = []
+            pom = []
             for i in range(len(all_rows)):
                 all_rows_new = []
                 word = ''
-                if i % 2 == 0:
+                if (i == 0 or i == len(all_rows)-1) or ':' in all_rows[i][1]:
                     for k in all_rows[i]:
                         if k == '-':
                             break
@@ -667,10 +668,30 @@ class transport:
                             all_rows_new.append(k)
                     if word != '':
                         all_rows_new.append(word)
+                elif ':' in all_rows[i][0]:
+                    if len(pom) == 0:
+                        pom.append(all_rows[i][0])
+                    else:
+                        pom.append(all_rows[i][0])
+                        for k in all_rows[i]:
+                            if k == '-':
+                                break
+                            elif k.isalpha() == True and k != 'peron':
+                                if word != '':
+                                    word = word + ' ' + k
+                                else:
+                                    word = k
+                        if word != '':
+                            pom.append(word)
+                        result_rows.append(pom)
+                        pom = []
                 else:
                     all_rows_new = all_rows[i][0]+' '+all_rows[i][1]
-                result_rows.append(all_rows_new)
+                #print(all_rows_new)
+                if len(all_rows_new) != 0:
+                    result_rows.append(all_rows_new)
             results.append(result_rows)
+        print(results)
 
     
         if len(results) == 0:

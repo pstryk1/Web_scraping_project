@@ -7,8 +7,7 @@ import sys
 from datetime import datetime
 import classes as cs
 import variables as var
-from PIL import Image
-Image.CUBIC = Image.BICUBIC
+
 
 def start():
     #startScreen.destroy()
@@ -32,23 +31,3 @@ if __name__ == '__main__':
     """
 
     
-
-
-
-
-
-#print(search_transport('Nowy Sącz', 'Kraków Główny', '12:00', '30.06.2024'))
-#print(search_transport('Zakopane', 'Kraków Główny', '12:00', '05.06.2024'))
-#print(search_transport('Kraków Główny', 'Słomniki', '11:00', '11.06.2024'))
-
-'''
-ab = cs.transport()
-
-ab.train('Kraków Główny', 'Niedźwiedź', '10:00', '2024-06-11')
-
-print(ab.start)
-print(ab.destination)
-print(ab.top6_dep_time)
-print(ab.top6_arr_time)
-
-'''
