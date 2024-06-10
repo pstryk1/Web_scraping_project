@@ -354,7 +354,7 @@ class SearchResult():
             
             #print(resultData)
             
-            self.frame1 = ttk.Frame(relief="solid",  width=1000, height=100, style="quocalcus.TFrame")
+            self.frame1 = ttk.Frame(relief="solid",  width=1000, height=120, style="quocalcus.TFrame")
             self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
             self.frame1.grid_propagate(False)
             for i in range(6):
@@ -362,15 +362,31 @@ class SearchResult():
             self.frame1.grid_rowconfigure(1, weight=0)
             self.frame1['borderwidth'] = 1
 
+            self.frame2 = ttk.Frame(master=self.frame1, width=700, height=20, style="quocalcus.TFrame")
+            self.frame2.grid(padx = 6, pady = 6, row = 1, column=0, sticky='ew')
+
             if type(resultData[var.resultRow-3][0]) == list:
                 value1 = [i for i in resultData[var.resultRow-3][0]]
+
+                for i in range(len(value1)):
+
+                    self.frame3 = ttk.Frame(master=self.frame2, relief="solid",  width=10, height=10, style="quocalcus.TFrame")
+                    
+                    self.frame3.grid(padx = 5, pady = 5, ipadx=2, ipady=2, row = 1, column=i, sticky='ew')
+                    self.frame3['borderwidth'] = 1
+
+                    self.label1 = ttk.Label(self.frame3 ,text=value1[i], font=("Tahoma", 10))
+                    self.label1.pack(anchor = 's')
             else:
                 value1 = resultData[var.resultRow-3][0]
-            
 
+                self.frame3 = ttk.Frame(master=self.frame2, relief="solid",  width=10, height=10, style="quocalcus.TFrame")
+                    
+                self.frame3.grid(padx = 5, pady = 5, ipadx=2, ipady=2, row = 1, column=0, sticky='ew')
+                self.frame3['borderwidth'] = 1
 
-            self.label1 = ttk.Label(self.frame1 ,text=value1, font=("Tahoma", 10))
-            self.label1.place(anchor='w', relx=0.005, rely=0.13)
+                self.label1 = ttk.Label(self.frame3 ,text=value1, font=("Tahoma", 10))
+                self.label1.pack(anchor = 's')
 
             self.godzina1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][1], font=("Tahoma", 20), foreground='white')
             self.godzina1.place(anchor='w', relx=0.005, rely=0.75)
