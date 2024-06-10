@@ -5,7 +5,7 @@ from datetime import datetime
 from lxml import html
 import requests
 import sys
-from datetime import date
+from datetime import date, timedelta
 import variables as var
 import webbrowser as web
 import csv
