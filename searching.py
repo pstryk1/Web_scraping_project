@@ -48,12 +48,11 @@ def search_transport(start, destination, hour, day):
 
         szwagropol = cs.transport()
         szwagropol.szwagropol(start, destination, hour, day_name(day))
-        #print(szwagropol.top5_dep_time)
+        
         majer = cs.transport()
         majer.majer(start, destination, hour, day_name(day))
 
         train = cs.transport()
-        print(f"czy jest: {destination}-{hour}-{day_name(day)}")
         train.train(start, destination, hour, day)
 
         if len(train.top6_dep_time):
@@ -64,7 +63,7 @@ def search_transport(start, destination, hour, day):
         
         train_data = []
         counter = 0
-        print(train.top6_dep_time)
+        #print(train.top6_dep_time)
         for i in range(6):
             if type(train.train_name[i]) != list:
                 train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])
@@ -78,6 +77,33 @@ def search_transport(start, destination, hour, day):
         transport.extend(train_data)
 
         transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1], '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
+
+    elif (start == 'Kraków Główny' and destination == 'Słomniki') or (destination == 'Kraków Główny' and start == 'Słomniki'):
+        
+        ad = cs.transport()
+        ad.AD(start, destination, hour, day)
+        
+        train = cs.transport()
+        train.train(start, destination, hour, day)
+
+        ad_data = [['AD', ad.top5_dep_time[i], ad.top5_arr_time[i], 'Bezpośrednio', ad.page] for i in range(5)]
+        
+        train_data = []
+        counter = 0
+        for i in range(6):
+            if type(train.train_name[i]) != list:
+                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio'])
+            else:
+                train_data.append([ train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
+                counter += 1
+
+        transport = []
+        transport.extend(ad_data)
+        transport.extend(train_data)
+
+        transport = sorted([sorted(transport, key= lambda o: abs(datetime.strptime(hour, '%H:%M') - datetime.strptime(o[1].replace(' ',':'), '%H:%M')))[i] for i in range(6)], key= lambda o: o[1])
+        print('gej')
+        print(transport)
     else:
 
         train = cs.transport()
@@ -98,6 +124,3 @@ def search_transport(start, destination, hour, day):
                     counter += 1
 
     return transport
-
-
-#print(search_transport('Kraków Główny', 'Słomniki', '11:00', '11.06.2024'))

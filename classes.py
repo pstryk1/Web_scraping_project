@@ -362,7 +362,10 @@ class SearchResult():
             self.frame1.grid_rowconfigure(1, weight=0)
             self.frame1['borderwidth'] = 1
 
-            value1 = [i.replace("{", ' ') for i in resultData[var.resultRow-3][0]]
+            if type(resultData[var.resultRow-3][0]) == list:
+                value1 = [i for i in resultData[var.resultRow-3][0]]
+            else:
+                value1 = resultData[var.resultRow-3][0]
             
 
 
@@ -391,9 +394,12 @@ class SearchResult():
                 col+=1
         
             """
+            '''
             var.links.append(resultData[var.resultRow-3][4])
             self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(resultData[var.resultRow-3][4]))
             self.wabpage.place(anchor='e', relx=0.95, rely=0.5)
+            
+            '''
             var.resultRow+=1
         
     
@@ -575,18 +581,17 @@ class transport:
         self.top5_arr_time = tuple([i[1] for i in top5_results])
         self.day_label = day
 
-    def AD(self,start,destination,leave, dates):
+    def AD(self, start, destination, planned_dep_time, day):
         
         self.start = start
         self.destination = destination
-        self.leave = leave
-        self.date = dates
+        self.day_label = day
         
-        self.dzien_tyg = ["poniedzialek","wtorek","sroda","czwartek","piatek"]
+        self.dzien_tyg = ["poniedziałek","wtorek","środa","czwartek","piątek"]
         
-        self.strona = "https://www.busy-krk.pl/slomniki-krakow/"
+        self.page = "https://www.busy-krk.pl/slomniki-krakow/"
             
-        self.query = requests.get(self.strona)
+        self.query = requests.get(self.page)
 
         self.soup = bs(self.query.content, 'html.parser')
 
@@ -608,8 +613,6 @@ class transport:
                         if idx < len(self.headers):
                             self.day = self.headers[idx]
                             self.timetable.append([self.day, f"{self.hour}:{self.text}"])
-
-
 
         if self.start == "Słomniki":
             self.timetable = [i for i in self.timetable if i[0]][35:60]
@@ -644,22 +647,32 @@ class transport:
 
         for i in self.timetable:
             time_str = i[1].replace(' ', ':').strip()
+
+            if len(time_str) < 5:
+                time_str = '0' + time_str
+                i[1] = time_str
+
+            print(time_str)
+            
             time_obj = datetime.strptime(time_str, '%H:%M')
             new_time_obj = time_obj + timedelta(minutes=36)
             new_time_str = new_time_obj.strftime('%H:%M')
+            print(new_time_str)
             i.append(new_time_str)
         
-        leave_time = datetime.strptime(self.leave, '%H:%M')
-        leave_date = datetime.strptime(self.date, '%d.%m.%Y')
+        leave_time = datetime.strptime(planned_dep_time, '%H:%M')
+        leave_date = datetime.strptime(day, '%d.%m.%Y')
         day_of_week = leave_date.strftime('%A').lower()
 
 
-        self.top5_departures = []
-        for i in sorted(self.timetable, key = lambda x: abs( leave_time - datetime.strptime(x[1].replace(' ', ':'),'%H:%M'))):
-            if day_of_week in i[0] and len(self.top5_departures) < 5:
-                self.top5_departures.append(i)
+        result = []
+        for i in sorted(self.timetable, key = lambda x: abs(leave_time - datetime.strptime(x[1].replace(' ', ':'),'%H:%M'))):
+            if day_of_week in i[0] and len(result) < 5:
+                result.append(i)
+        print(result)
+        self.top5_dep_time = [i[1] for i in result]
+        self.top5_arr_time = [i[2] for i in result]
         
-        return self.top5_departures
         
     def train(self, start, destination, planned_dep_time, date):
 
@@ -782,4 +795,3 @@ class transport:
 
 
 
-            
