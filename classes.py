@@ -575,7 +575,6 @@ class transport:
         self.top5_arr_time = tuple([i[1] for i in top5_results])
         self.day_label = day
 
-    '''
     def AD(self,start,destination,leave, dates):
         
         self.start = start
@@ -583,7 +582,7 @@ class transport:
         self.leave = leave
         self.date = dates
         
-        self.dzien_tyg = ["poniedziałek","wtorek","środa","czwartek","piątek"]
+        self.dzien_tyg = ["poniedzialek","wtorek","sroda","czwartek","piatek"]
         
         self.strona = "https://www.busy-krk.pl/slomniki-krakow/"
             
@@ -618,19 +617,49 @@ class transport:
             self.timetable = [i for i in self.timetable if i[0]][10:35]
         
         for i in self.timetable:
-           if len(i[1][2:]) > 4:
-               x = i[1][5:]
-               i[1] = i[1][:4]
-               self.timetable.append([i[0],i[1][:2] + x])
+            
+            if len(i[1][2:]) > 4:
+                x = i[1][5:]
+                if len(i[1]) < 5: 
+                    i[1] = i[1][:4]
+                else:
+                    i[1] = i[1][:5] 
+                if ":" in i[1][:2]:
+                    self.timetable.append([i[0],i[1][:2] + x])
+                else:
+                    self.timetable.append([i[0],i[1][:2] +':'+ x.strip()])
+                   
+        for i in self.timetable:
+            i[1] = i[1].strip()
+                   
             
         for i in self.dzien_tyg:       
             for j in self.timetable:
                 if j[0] == "pon. - pt.":
                     self.timetable.append([i,j[1]])
+                    
+            
+        self.timetable = [i for i in self.timetable if i[0] != 'pon. - pt.']
+
+
+        for i in self.timetable:
+            time_str = i[1].replace(' ', ':').strip()
+            time_obj = datetime.strptime(time_str, '%H:%M')
+            new_time_obj = time_obj + timedelta(minutes=36)
+            new_time_str = new_time_obj.strftime('%H:%M')
+            i.append(new_time_str)
         
-        #return self.top5_departures
-    
-    '''
+        leave_time = datetime.strptime(self.leave, '%H:%M')
+        leave_date = datetime.strptime(self.date, '%d.%m.%Y')
+        day_of_week = leave_date.strftime('%A').lower()
+
+
+        self.top5_departures = []
+        for i in sorted(self.timetable, key = lambda x: abs( leave_time - datetime.strptime(x[1].replace(' ', ':'),'%H:%M'))):
+            if day_of_week in i[0] and len(self.top5_departures) < 5:
+                self.top5_departures.append(i)
+        
+        return self.top5_departures
         
     def train(self, start, destination, planned_dep_time, date):
 
