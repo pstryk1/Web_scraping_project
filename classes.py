@@ -242,6 +242,14 @@ class SearchSettings(ttk.Frame):
 
         def update():
 
+
+            var.properties[0] = self.entry.get()
+            var.properties[1] = self.entry2.get()
+
+            if var.properties[0] == var.properties[1]:
+                self.entry.configure(style = 'danger.TEntry')
+                self.entry2.configure(style = 'danger.TEntry')
+                return
             #if (var.wyniki):
                 #del var.wyniki
             var.resultRow = 3
@@ -253,15 +261,9 @@ class SearchSettings(ttk.Frame):
                 label.grid(padx = 10, pady = 10, row = 3, column=0, sticky='n')
                 label.grid_rowconfigure(2, weight=2)
             
-            
-            #if var.result[5] !=0:
-                #for i in range(5):
-                    #var.result[i].frame1.destroy()
-                    
-                #del var.result
-            #var.result=[0,0,0,0,0,0,0]
-            var.properties[0] = self.entry.get()
-            var.properties[1] = self.entry2.get()
+
+
+
 
             error = None
             for i in range(3):
