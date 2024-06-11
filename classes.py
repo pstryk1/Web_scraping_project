@@ -242,8 +242,8 @@ class SearchSettings(ttk.Frame):
 
         def update():
 
-            if (var.wyniki):
-                del var.wyniki
+            #if (var.wyniki):
+                #del var.wyniki
             var.resultRow = 3
 
             try:
