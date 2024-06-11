@@ -705,13 +705,10 @@ class transport:
             if len(time_str) < 5:
                 time_str = '0' + time_str
                 i[1] = time_str
-
-            print(time_str)
             
             time_obj = datetime.strptime(time_str, '%H:%M')
             new_time_obj = time_obj + timedelta(minutes=36)
             new_time_str = new_time_obj.strftime('%H:%M')
-            print(new_time_str)
             i.append(new_time_str)
         
         leave_time = datetime.strptime(planned_dep_time, '%H:%M')
@@ -723,7 +720,6 @@ class transport:
         for i in sorted(self.timetable, key = lambda x: abs(leave_time - datetime.strptime(x[1].replace(' ', ':'),'%H:%M'))):
             if day_of_week in i[0] and len(result) < 5:
                 result.append(i)
-        print(result)
         self.top5_dep_time = [i[1] for i in result]
         self.top5_arr_time = [i[2] for i in result]
         
@@ -753,7 +749,7 @@ class transport:
             all_rows = []
             for row in table:
                 all_rows.append(row.text.split())
-            print(all_rows)
+
             result_rows = []
             pom = []
             for i in range(len(all_rows)):
@@ -795,8 +791,8 @@ class transport:
                 if len(all_rows_new) != 0:
                     result_rows.append(all_rows_new)
             results.append(result_rows)
-        print(results)
-
+        #print(results)
+        self.all_results = results
     
         if len(results) == 0:
             self.is_connection = False
