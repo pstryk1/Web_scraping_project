@@ -254,22 +254,40 @@ class SearchSettings(ttk.Frame):
             #var.result=[0,0,0,0,0,0,0]
             var.properties[0] = self.entry.get()
             var.properties[1] = self.entry2.get()
-            if var.properties[0]=='':
-                self.entry.insert(0, 'Pole wymagane')
-                self.entry.configure(style = 'danger.TEntry')
-                return
-            if var.properties[1]=='':
-                self.entry2.insert(0, 'Pole wymagane')
-                self.entry2.configure(style = 'danger.TEntry')
-                return
-            if var.properties[2] == 0:
-                self.menu1.configure(style='danger.Outline.TMenubutton')
-                return
-            if var.properties[3] == 0:
-                self.cal.configure(style='danger.TCalendar')
-                return
+
+            error = None
+            for i in range(3):
+
+                if i == 2: i += 1
+
+                if var.properties[i]=='':
+                    if i == 0:
+                        self.entry.insert(0, 'Pole wymagane')
+                        self.entry.configure(style = 'danger.TEntry')
+                    elif i == 3:
+                        self.cal.entry.configure(style='danger.TEntry')
+                    else:
+                        self.entry2.insert(0, 'Pole wymagane')
+                        self.entry2.configure(style = 'danger.TEntry')
+                    error = True
+                elif i != 3 and station_code(var.properties[i].replace(' ', '+'))=='Error':
+                    if i == 0:
+                        self.entry.configure(style = 'danger.TEntry')
+                    else:
+                        self.entry2.configure(style = 'danger.TEntry')
+                    error = True
+
+                if i == 3 and error == True:
+                    return
+                
+
+            self.cal.entry.configure(style='quocalcus.TEntry')
+            self.entry.configure(style = 'quocalcus.TEntry')
+            self.entry2.configure(style = 'quocalcus.TEntry')
+            
+
             wyniki  = SearchResult(ttk)
-            #print(var.properties)
+            print(var.properties)
 
 
         #---------------------------------------------------------------------------------------------------------------------------#
@@ -330,7 +348,7 @@ class SearchSettings(ttk.Frame):
 
         self.sv = tk.StringVar()
         self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: find_data(sv))
-        self.cal.entry.configure(textvariable=self.sv)
+        self.cal.entry.configure(textvariable=self.sv, style='quocalcus.TEntry')
 
         ########## Przycisk wyszukiwania
         self.find = ttk.Button(self.frame, style="quocalcus.Outline.TButton", text="Szukaj", command=update)
@@ -466,6 +484,26 @@ def Labels(label, bus):
         }
     return all_labels[label]
 
+def station_code(station):
+    with open('Hafas_Codes.csv', 'r', encoding= 'utf8') as file:
+        data = {
+            i.split(';')[0]:i.split(';')[1].strip() for i in file.readlines()
+        }
+        try:
+            return data[station]
+        except KeyError:
+            return 'Error'
+    
+def station_name_code(station):
+    if len(station) > 1:
+        station_link = ''
+        for i in station:
+            if station_link != '':
+                station_link = station_link + '+' + i
+            else:
+                station_link = i
+        return station_link
+    return station[0]
     
 class transport:
 
@@ -691,24 +729,6 @@ class transport:
         
         
     def train(self, start, destination, planned_dep_time, date):
-
-        def station_code(station):
-            with open('Hafas_Codes.csv', 'r', encoding= 'utf8') as file:
-                data = {
-                    i.split(';')[0]:i.split(';')[1].strip() for i in file.readlines()
-                }
-                return data[station]
-            
-        def station_name_code(station):
-            if len(station) > 1:
-                station_link = ''
-                for i in station:
-                    if station_link != '':
-                        station_link = station_link + '+' + i
-                    else:
-                        station_link = i
-                return station_link
-            return station[0]
         
         start_link = station_name_code(start.split())
         destination_link = station_name_code(destination.split())
@@ -716,7 +736,7 @@ class transport:
         date_link = date.replace('.','')
         hour_link = planned_dep_time.replace(':','')
         zero_link = '0'
-        
+
         if planned_dep_time[:2] != '00' and int(planned_dep_time[:2]) > 10:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
         elif int(planned_dep_time[:2]) <= 10:
