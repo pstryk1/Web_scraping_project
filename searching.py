@@ -92,9 +92,9 @@ def search_transport(start, destination, hour, day):
         counter = 0
         for i in range(6):
             if type(train.train_name[i]) != list:
-                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio'])
+                train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])
             else:
-                train_data.append([ train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter]])
+                train_data.append([ train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], train.train_change_city[counter], train.page])
                 counter += 1
 
         transport = []
