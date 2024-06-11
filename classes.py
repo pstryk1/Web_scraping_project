@@ -811,8 +811,8 @@ class transport:
                 if len(all_rows_new) != 0:
                     result_rows.append(all_rows_new)
             results.append(result_rows)
-        
-
+        #print(results)
+        self.all_results = results
     
         if len(results) == 0:
             self.is_connection = False
