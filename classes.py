@@ -10,6 +10,8 @@ import variables as var
 import webbrowser as web
 import csv
 import searching as search
+from ttkbootstrap.constants import *
+from ttkbootstrap.tooltip import ToolTip
 
 themes = ('quocalcus', 'flatly')
 import time
@@ -114,7 +116,10 @@ class SearchSettings(ttk.Frame):
         frame = ttk.Style()
         frame.configure("quocalcus.TFrame", bordercolor = '#08bad1')
 
+        #tooltip_style = ttk.Style()
+        #tooltip_style.configure('quocalcus.TTooltip', bg="red")
 
+        
         self.frame = ttk.Frame(parent.ttk, relief="solid",  width=100, style="quocalcus.TFrame")
         self.frame.pack_propagate(False)
         self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='n')
@@ -233,8 +238,12 @@ class SearchSettings(ttk.Frame):
 
         def find_data(date):
             var.properties[3] = date.get()
-                
+        
+
         def update():
+
+            if (var.wyniki):
+                del var.wyniki
             var.resultRow = 3
 
             try:
@@ -243,7 +252,6 @@ class SearchSettings(ttk.Frame):
                 label = ttk.Label(text='Brak połączenia internetowego', font=("Monsterrat", 25), style='danger')
                 label.grid(padx = 10, pady = 10, row = 3, column=0, sticky='n')
                 label.grid_rowconfigure(2, weight=2)
-            #print(var.result[5])
             
             
             #if var.result[5] !=0:
@@ -286,8 +294,8 @@ class SearchSettings(ttk.Frame):
             self.entry2.configure(style = 'quocalcus.TEntry')
             
 
-            wyniki  = SearchResult(ttk)
-            print(var.properties)
+            var.wyniki  = SearchResult(ttk)
+            
 
 
         #---------------------------------------------------------------------------------------------------------------------------#
@@ -362,16 +370,14 @@ class SearchResult():
 
 
         def openWeb(comp):
+            print(comp)
             web.open(str(comp))
+
         
         resultData = search.search_transport(*var.properties)
 
         #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
         for j in range(6):
-
-            
-            #print(resultData)
-            
             self.frame1 = ttk.Frame(relief="solid",  width=1000, height=120, style="quocalcus.TFrame")
             self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
             self.frame1.grid_propagate(False)
@@ -406,13 +412,13 @@ class SearchResult():
                 self.label1 = ttk.Label(self.frame3 ,text=value1, font=("Tahoma", 10))
                 self.label1.pack(anchor = 's')
 
-            self.godzina1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][1], font=("Tahoma", 20), foreground='white')
-            self.godzina1.place(anchor='w', relx=0.005, rely=0.75)
+            self.godzina1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][1], font=("Tahoma", 20), foreground='#949494')
+            self.godzina1.place(anchor='w', relx=0.01, rely=0.75)
 
-            self.label = ttk.Label(self.frame1 ,text='Odjazd:', font=("Tahoma", 8))
-            self.label.place(anchor='w', relx=0.005, rely=0.45)
+            self.label = ttk.Label(self.frame1 ,text='Odjazd:', font=("Tahoma", 8),)
+            self.label.place(anchor='w', relx=0.01, rely=0.45)
 
-            self.label3 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][2], font=("Tahoma", 20), foreground='white')
+            self.label3 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][2], font=("Tahoma", 20), foreground='#949494')
             self.label3.place(anchor='w', relx=0.25, rely=0.75)
 
             self.label = ttk.Label(self.frame1 ,text='Przyjazd:', font=("Tahoma", 8))
@@ -428,12 +434,22 @@ class SearchResult():
                 col+=1
         
             """
-            '''
-            var.links.append(resultData[var.resultRow-3][4])
-            self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda: openWeb(resultData[var.resultRow-3][4]))
+            print(resultData[var.resultRow-3][3])
+            if resultData[var.resultRow-3][3] == 'Bezpośrednio':
+                self.propeties = ttk.Label(self.frame1, bootstyle = 'quocalcus.TLabel', text="Bezpośrednio")
+                self.propeties.place(anchor='e', relx=0.8, rely=0.5)
+            else:
+                self.propeties = ttk.Label(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Przesiadki")
+                self.propeties.place(anchor='e', relx=0.8, rely=0.5)
+                self.tooltip = ToolTip(self.propeties, text=str('\n'.join([str(' - '.join(i)) for i in resultData[var.resultRow-3][3]])), bootstyle="quocalcus.Outline.TButton")
+
+
+            var.links[j] = resultData[var.resultRow-3][4]
+            print(var.links)
+            self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda link=var.links[j]: openWeb(link))
             self.wabpage.place(anchor='e', relx=0.95, rely=0.5)
             
-            '''
+            
             var.resultRow+=1
         
     
@@ -706,12 +722,12 @@ class transport:
                 time_str = '0' + time_str
                 i[1] = time_str
 
-            print(time_str)
+            
             
             time_obj = datetime.strptime(time_str, '%H:%M')
             new_time_obj = time_obj + timedelta(minutes=36)
             new_time_str = new_time_obj.strftime('%H:%M')
-            print(new_time_str)
+            
             i.append(new_time_str)
         
         leave_time = datetime.strptime(planned_dep_time, '%H:%M')
@@ -723,7 +739,7 @@ class transport:
         for i in sorted(self.timetable, key = lambda x: abs(leave_time - datetime.strptime(x[1].replace(' ', ':'),'%H:%M'))):
             if day_of_week in i[0] and len(result) < 5:
                 result.append(i)
-        print(result)
+        
         self.top5_dep_time = [i[1] for i in result]
         self.top5_arr_time = [i[2] for i in result]
         
@@ -743,7 +759,7 @@ class transport:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{zero_link+str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='  
         else:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{hour_link}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={hour_link}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
-        print(self.page)
+        #print(self.page)
         query = requests.get(self.page)
         scrape = bs(query.text, 'lxml')
 
@@ -753,7 +769,7 @@ class transport:
             all_rows = []
             for row in table:
                 all_rows.append(row.text.split())
-            print(all_rows)
+            
             result_rows = []
             pom = []
             for i in range(len(all_rows)):
@@ -795,7 +811,7 @@ class transport:
                 if len(all_rows_new) != 0:
                     result_rows.append(all_rows_new)
             results.append(result_rows)
-        print(results)
+        
 
     
         if len(results) == 0:
