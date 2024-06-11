@@ -1,13 +1,5 @@
-
-import tkinter as tk
-import ttkbootstrap as ttk
-from bs4 import BeautifulSoup as bs
-from lxml import html
-import requests
-import sys
 from datetime import datetime
 import classes as cs
-import variables as var
 
 def search_transport(start, destination, hour, day):
 
@@ -63,7 +55,7 @@ def search_transport(start, destination, hour, day):
         
         train_data = []
         counter = 0
-        #print(train.top6_dep_time)
+
         for i in range(6):
             if type(train.train_name[i]) != list:
                 train_data.append([train.train_name[i], train.top6_dep_time[i], train.top6_arr_time[i], 'Bezpośrednio', train.page])

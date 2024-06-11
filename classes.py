@@ -2,10 +2,8 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from bs4 import BeautifulSoup as bs
 from datetime import datetime
-from lxml import html
 import requests
-import sys
-from datetime import date, timedelta
+from datetime import timedelta
 import variables as var
 import webbrowser as web
 import csv
@@ -14,8 +12,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.tooltip import ToolTip
 
 themes = ('quocalcus', 'flatly')
-import time
-
+themes_labels = ('Dark', 'Light')
 
 
 class FullscreenWindow:
@@ -26,8 +23,7 @@ class FullscreenWindow:
         self.ttk = ttk.Window(themename=themes[0])
         self.ttk.title("QuoCalCus - zkalkuluj swoją drogę!")
         self.ttk.iconbitmap("images/logo_darkblue_copy.ico")
-        #self.ttk.attributes("-topmost", True)
-        #self.tk.geometry("{0}x{1}+0+0".format(self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()))
+
         self.ttk.grid_columnconfigure(0, weight=1)
         self.ttk.grid_rowconfigure(1, weight=0)
 
@@ -40,13 +36,9 @@ class FullscreenWindow:
         self.ramka= tk.Frame( bd=2, relief="solid", padx=10, pady=10, width=100)
         self.ramka.config()
         self.ramka.grid(padx = 10, pady = 10, row = 2, column=0, sticky='n')
-        #self.frame['borderwidth'] = 1
         self.label1 = ttk.Label(text='Wyniki wyszukiwania', font=("Monsterrat", 15))
         self.label1.grid(padx = 10, pady = 10, row = 2, column=0, sticky='n')
         self.label1.grid_rowconfigure(2, weight=2)
-        #
-        
-        
 
         self.state = False
         self.ttk.bind("<F11>", self.toggle_fullscreen)
@@ -61,11 +53,11 @@ class FullscreenWindow:
         self.state = False
         self.ttk.attributes("-fullscreen", False)
         return "break"
+    
     #####################################################
 
     def label_update(self, sv):
         self.napis.config(text=sv.get())
-
 
     def colors(self, color, fontcolor):
         self.ttk.configure(bg=color, fg = fontcolor)
@@ -76,10 +68,10 @@ class FullscreenWindow:
         return edit_text.get("1.0", "end-1c")  
 
     def toggle_button(self):
+
         def bfun():
             self.ttk.style.theme_use(themes[var1.get()])
-            self.toggle.configure(text=themes[var1.get()].capitalize())
-
+            self.toggle.configure(text=themes_labels[var1.get()].capitalize())
 
         var1 = ttk.IntVar()
         self.toggle = ttk.Checkbutton(
@@ -96,7 +88,6 @@ class FullscreenWindow:
 class SearchSettings(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
-
 
         mystyle = ttk.Style()
         mystyle.configure("quocalcus.Outline.TMenubutton", font=("Tahoma", 20))
@@ -116,16 +107,17 @@ class SearchSettings(ttk.Frame):
         frame = ttk.Style()
         frame.configure("quocalcus.TFrame", bordercolor = '#08bad1')
 
-        #tooltip_style = ttk.Style()
-        #tooltip_style.configure('quocalcus.TTooltip', bg="red")
+        mystyle1 = ttk.Style()
+        mystyle1.configure("flatfly.Outline.TMenubutton", font=("Tahoma", 20))
 
+        buttonStyle1 = ttk.Style()
+        buttonStyle1.configure("flatfly.Outline.TButton", font=("Tahoma", 20))
         
         self.frame = ttk.Frame(parent.ttk, relief="solid",  width=100, style="quocalcus.TFrame")
         self.frame.pack_propagate(False)
         self.frame.grid(padx = 20, pady = 10, row = 1, column=0, sticky='n')
         self.frame['borderwidth'] = 1
 
-        
         def switch():
             
             holder = self.entry.get()
@@ -135,7 +127,6 @@ class SearchSettings(ttk.Frame):
             self.entry.insert(0, holder2)
             self.entry2.insert(0, holder)
             pass
-
 
     #---------------------------------------------------------------------------------------------------------------------------#
 
@@ -233,7 +224,6 @@ class SearchSettings(ttk.Frame):
         def on_right_click2(event):
             self.entry2.delete(0, '')
 
-
     #---------------------------------------------------------------------------------------------------------------------------#
 
         def find_data(date):
@@ -242,7 +232,6 @@ class SearchSettings(ttk.Frame):
 
         def update():
 
-
             var.properties[0] = self.entry.get()
             var.properties[1] = self.entry2.get()
 
@@ -250,8 +239,7 @@ class SearchSettings(ttk.Frame):
                 self.entry.configure(style = 'danger.TEntry')
                 self.entry2.configure(style = 'danger.TEntry')
                 return
-            #if (var.wyniki):
-                #del var.wyniki
+
             var.resultRow = 3
 
             try:
@@ -260,10 +248,6 @@ class SearchSettings(ttk.Frame):
                 label = ttk.Label(text='Brak połączenia internetowego', font=("Monsterrat", 25), style='danger')
                 label.grid(padx = 10, pady = 10, row = 3, column=0, sticky='n')
                 label.grid_rowconfigure(2, weight=2)
-            
-
-
-
 
             error = None
             for i in range(3):
@@ -290,18 +274,12 @@ class SearchSettings(ttk.Frame):
                 if i == 3 and error == True:
                     return
                 
-
             self.cal.entry.configure(style='quocalcus.TEntry')
             self.entry.configure(style = 'quocalcus.TEntry')
             self.entry2.configure(style = 'quocalcus.TEntry')
-            
-
-            var.wyniki  = SearchResult(ttk)
-            
-
+            var.wyniki = SearchResult(ttk)
 
         #---------------------------------------------------------------------------------------------------------------------------#
-
         
         stations = load_data('Hafas_Codes.csv')
 
@@ -313,7 +291,6 @@ class SearchSettings(ttk.Frame):
         # Powiązanie funkcji z zdarzeniem
         self.entry.bind('<KeyRelease>', on_keyrelease)
         self.entry.bind('<Button-1>', on_right_click)
-        
         
     #-----------------------------------------------------switch----------------------------------------------------------------------#
         self.switch1 = ttk.Button(self.frame, style="quocalcus.Outline.TButton", text="<>", command=switch)
@@ -332,14 +309,11 @@ class SearchSettings(ttk.Frame):
         self.entry2.bind('<KeyRelease>', on_keyrelease2)
         self.entry2.bind('<Button-1>', on_right_click2)
 
-
     #---------------------------------------------------------------------------------------------------------------------------#
 
         def change1(text):
-            #menubuttonStyle.configure('danger.Outline.TMenubutton', font=("Tahoma", 20))
             self.menu1.configure(text=text, style='quocalcus.Outline.TMenubutton')
             var.properties[2] = text
-            #parent.label1.config(text=text)
 
         self.menu1 = ttk.Menubutton(self.frame, style="quocalcus.Outline.TMenubutton", text="00:00")
         self.menu1.grid(padx=10, pady=10, row=1, column=3, sticky="e") 
@@ -350,35 +324,31 @@ class SearchSettings(ttk.Frame):
         for x in [f"{hour:02d}:00" for hour in range(24)]:
             in_menu1.add_radiobutton(label=x, variable=item_var, command=lambda x=x: change1(x))
         self.menu1['menu'] = in_menu1
+        
+        self.image = ttk.PhotoImage(file="images/cal.png")
 
-        ##########
+        self.cal = ttk.DateEntry(self.frame, style="quocalcus.TCalendar")
+        self.cal.grid(padx=10, pady=10, row=1, column=4, sticky="e")
 
-        self.cal = ttk.DateEntry(self.frame, style="quocalcus.TCalendar",)
-        self.cal.grid(padx=10, pady=10, row=1, column=4, sticky="e")  
-
+        self.cal.button.configure(style="quocalcus.Outline.TButton", width=3, image=self.image)
+        
         self.sv = tk.StringVar()
         self.sv.trace_add("write", lambda name, index, mode, sv=self.sv: find_data(sv))
-        self.cal.entry.configure(textvariable=self.sv, style='quocalcus.TEntry')
+        self.cal.entry.configure(textvariable=self.sv, style='quocalcus.TEntry', font=("Tahoma", 20))
 
         ########## Przycisk wyszukiwania
         self.find = ttk.Button(self.frame, style="quocalcus.Outline.TButton", text="Szukaj", command=update)
         self.find.grid(padx=10, pady=10, row=1, column=5, sticky="e")
 
-        #########
-
 class SearchResult():
     def __init__(self, parent):
         super().__init__()
 
-
         def openWeb(comp):
-            print(comp)
             web.open(str(comp))
 
-        
         resultData = search.search_transport(*var.properties)
 
-        #resultData = ['Company', 'Departure', 'Arrival', 'link', 'price']
         for j in range(6):
             self.frame1 = ttk.Frame(relief="solid",  width=1000, height=120, style="quocalcus.TFrame")
             self.frame1.grid(padx = 10, pady = 10, row = var.resultRow, column=0, sticky='n')
@@ -426,17 +396,6 @@ class SearchResult():
             self.label = ttk.Label(self.frame1 ,text='Przyjazd:', font=("Tahoma", 8))
             self.label.place(anchor='w', relx=0.25, rely=0.45)
 
-            
-            """
-            col = 0
-            for i in range(4):
-        
-                self.label1 = ttk.Label(self.frame1 ,text=resultData[var.resultRow-3][i], font=("Tahoma", 13))
-                self.label1.grid(padx = 10, pady = 5, row = 0, column=col,sticky='n')
-                col+=1
-        
-            """
-            print(resultData[var.resultRow-3][3])
             if resultData[var.resultRow-3][3] == 'Bezpośrednio':
                 self.propeties = ttk.Label(self.frame1, bootstyle = 'quocalcus.TLabel', text="Bezpośrednio")
                 self.propeties.place(anchor='e', relx=0.8, rely=0.5)
@@ -445,37 +404,12 @@ class SearchResult():
                 self.propeties.place(anchor='e', relx=0.8, rely=0.5)
                 self.tooltip = ToolTip(self.propeties, text=str('\n'.join([str(' - '.join(i)) for i in resultData[var.resultRow-3][3]])), bootstyle="quocalcus.Outline.TButton")
 
-
             var.links[j] = resultData[var.resultRow-3][4]
-            print(var.links)
             self.wabpage = ttk.Button(self.frame1, bootstyle="quocalcus.Outline.TButton", text="Strona", command=lambda link=var.links[j]: openWeb(link))
             self.wabpage.place(anchor='e', relx=0.95, rely=0.5)
-            
-            
+
             var.resultRow+=1
         
-    
-        """
-    
-        res = [var.company]
-        day = 0
-        finded = False
-        for i in var.dest_list[var.destination]:
-            
-            if i[0][:2] == var.properties[2][:2]:
-                res.extend(i)
-                finded = True
-
-                return res
-            else:
-                day = day + 1
-        if day >=24 or finded == False:
-            print("No results")
-            return "No results"
-        """
-        
-
-
 def Labels(label, bus):
     if bus == "Szwagropol":
         all_labels = {
@@ -660,19 +594,15 @@ class transport:
         self.day_label = day
         
         self.dzien_tyg = ["poniedziałek","wtorek","środa","czwartek","piątek"]
-        
         self.page = "https://www.busy-krk.pl/slomniki-krakow/"
             
         self.query = requests.get(self.page)
-
         self.soup = bs(self.query.content, 'html.parser')
 
         self.timetable = []
-
         self.rows = self.soup.find_all('tr')
         self.headers = [header.get_text().strip() for header in self.rows[12].find_all('th')]
         
-
         for row in self.rows[1:]:
             self.cells = row.find_all('td')
             self.hour = None
@@ -707,15 +637,12 @@ class transport:
         for i in self.timetable:
             i[1] = i[1].strip()
                    
-            
         for i in self.dzien_tyg:       
             for j in self.timetable:
                 if j[0] == "pon. - pt.":
                     self.timetable.append([i,j[1]])
                     
-            
         self.timetable = [i for i in self.timetable if i[0] != 'pon. - pt.']
-
 
         for i in self.timetable:
             time_str = i[1].replace(' ', ':').strip()
@@ -723,8 +650,6 @@ class transport:
             if len(time_str) < 5:
                 time_str = '0' + time_str
                 i[1] = time_str
-
-            
             
             time_obj = datetime.strptime(time_str, '%H:%M')
             new_time_obj = time_obj + timedelta(minutes=36)
@@ -736,7 +661,6 @@ class transport:
         leave_date = datetime.strptime(day, '%d.%m.%Y')
         day_of_week = leave_date.strftime('%A').lower()
 
-
         result = []
         for i in sorted(self.timetable, key = lambda x: abs(leave_time - datetime.strptime(x[1].replace(' ', ':'),'%H:%M'))):
             if day_of_week in i[0] and len(result) < 5:
@@ -744,7 +668,6 @@ class transport:
         
         self.top5_dep_time = [i[1] for i in result]
         self.top5_arr_time = [i[2] for i in result]
-        
         
     def train(self, start, destination, planned_dep_time, date):
         
@@ -761,7 +684,7 @@ class transport:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{zero_link+str(int(planned_dep_time[:2])-1)+planned_dep_time[-2:]}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={str(int(planned_dep_time[:2])-1)}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='  
         else:
             self.page = f'https://bilkom.pl/podroz?basketKey=&carrierKeys=PZ%2CP2%2CP1%2CP5%2CP7%2CP4%2CP9%2CP0%2CO1%2CP3%2CP6%2CP8&trainGroupKeys=G.EXPRESS_TRAINS%2CG.FAST_TRAINS%2CG.REGIONAL_TRAINS&fromStation={start_link}&poczatkowa=A%3D1%40O%3D{start_link}%40X%3D19947423%40Y%3D50067192%40U%3D51%40L%3D{station_code(start_link)}%40B%3D1%40p%3D1716898916%40&toStation={destination_link}&docelowa=A%3D1%40O%3D{destination_link}%40X%3D22006798%40Y%3D50043110%40U%3D51%40L%3D{station_code(destination_link)}%40B%3D1%40p%3D1716898916%40&middleStation1=&posrednia1=&posrednia1czas=&middleStation2=&posrednia2=&posrednia2czas=&data={date_link}{hour_link}&date={date[:2]}%2F{date[3:5]}%2F{date[-4:]}&time={hour_link}%3A{planned_dep_time[-2:]}&minChangeTime=10&przyjazd=false&_csrf='
-        #print(self.page)
+
         query = requests.get(self.page)
         scrape = bs(query.text, 'lxml')
 
@@ -809,11 +732,11 @@ class transport:
                         pom = []
                 else:
                     all_rows_new = all_rows[i][0]+' '+all_rows[i][1]
-                #print(all_rows_new)
+
                 if len(all_rows_new) != 0:
                     result_rows.append(all_rows_new)
             results.append(result_rows)
-        #print(results)
+
         self.all_results = results
     
         if len(results) == 0:
